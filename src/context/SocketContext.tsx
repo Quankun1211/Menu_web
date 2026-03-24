@@ -1,0 +1,31 @@
+import React, { createContext, useContext, useMemo, useEffect } from 'react';
+import { io, Socket } from 'socket.io-client';
+import env from "../config/envConfig";
+
+const SocketContext = createContext<Socket | null>(null);
+
+export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
+  const socketUrl = env.VITE_SOCKET_URL || 'https://menu-backend-ve33.onrender.com';
+  
+  const socket = useMemo(() => io(socketUrl), [socketUrl]);
+
+  useEffect(() => {
+    return () => {
+      socket.disconnect();
+    };
+  }, [socket]);
+
+  return (
+    <SocketContext.Provider value={socket}>
+      {children}
+    </SocketContext.Provider>
+  );
+};
+
+export const useSocket = () => {
+  const context = useContext(SocketContext);
+  if (!context) {
+    throw new Error('useSocket must be used within a SocketProvider');
+  }
+  return context;
+};
