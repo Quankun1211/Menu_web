@@ -28,11 +28,11 @@ export const onReadNotification = async (id: string): Promise<BackendResponse<No
   const data = await api.patch(`/notification/read/${id}`);
   return data.data;
 };
-export const onAskChatbot = async (payload: { message: string, history: any[] }) => {
-    const res = await api.post("/ai/ask", payload);
-    return res.data;
-}
 export const onReadAllNotification = async (): Promise<BackendResponse<NotificationResponse>> => {
   const data = await api.patch(`/notification/read-all`);
   return data.data;
 };
+export const onAskChatbot = async (payload: { message: string, history: any[] }) => {
+    const res = await api.post("/ai/ask", payload);
+    return res.data;
+}

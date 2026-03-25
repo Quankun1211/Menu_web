@@ -6,7 +6,6 @@ const useGetShockDeals = (page: number = 1, limit: number = 12) => {
     queryKey: ["get-shock-deals", page, limit],
     queryFn: () => onGetShockDealProducts(page, limit),
   });
-
   return { 
     data,
     isPending, 
