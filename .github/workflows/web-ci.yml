@@ -22,5 +22,6 @@ jobs:
         with:
           context: .
           push: true
-          # Thay đổi tag này cho đúng với Repository Admin của bạn trên Docker Hub
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/fresh-food-web:latest
+
+      

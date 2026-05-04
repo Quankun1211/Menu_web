@@ -302,7 +302,7 @@ export default function Header() {
               }}
             >
               <div className="cursor-pointer group p-1">
-                <Badge count={unreadCount} size="small" offset={[2, 2]} color="#D16D2F">
+                <Badge count={unreadCount > 9 ? '9+' : unreadCount} size="small" offset={[2, 2]} color="#D16D2F">
                   <BellOutlined className="text-2xl text-[#8B5E3C] group-hover:text-[#D16D2F] transition-colors" />
                 </Badge>
               </div>

@@ -14,6 +14,8 @@ const useLogin = () => {
         mutationKey: ["login"],
         mutationFn: onLogInApi,
         onSuccess: (data) => {
+            console.log(data);
+            
             if (data && data.data) {
                 const { access_token } = data.data;
                 const userData = jwtDecode(access_token) as JwtPayload;

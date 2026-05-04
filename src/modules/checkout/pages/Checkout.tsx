@@ -28,7 +28,6 @@ export default function CheckoutPage() {
     checkoutItems, 
     source 
   } = useCheckoutStore();
-console.log(checkoutItems);
 
   const { data: previewRes, isPending: previewPending } = usePreviewCheckout(checkoutItems);
   const { data: couponsData } = useGetMyCoupons();
@@ -42,14 +41,12 @@ console.log(checkoutItems);
   const [appliedCode, setAppliedCode] = useState("");
 
   const totalAmount = previewRes?.data?.totalAmount ?? 0;
-  console.log(totalAmount);
   
   const addresses = getAddress?.data ?? [];
   const displayAddress = selectedAddress || addresses.find((a) => a.isDefault) || addresses[0] || null;
 
   const shippingFee = 25000;
   const subTotal = previewRes?.data?.totalAmount ?? 0; 
-  console.log(subTotal);
   
 const finalTotal = Math.max(subTotal + shippingFee - Math.abs(discountValue), 0);
 
