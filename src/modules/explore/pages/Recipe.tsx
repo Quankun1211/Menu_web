@@ -9,7 +9,7 @@ import {
   LoadingOutlined,
   EnvironmentOutlined
 } from "@ant-design/icons";
-import { Spin, Button, Tag, Empty, message } from "antd";
+import { Spin, Button, Tag, Empty, message, Pagination } from "antd";
 
 import useGetCategoryRecipe from '../hooks/useGerCategoryRecipe';
 import useGetRecipe from '../hooks/useGetRecipe';
@@ -19,11 +19,13 @@ import RecipeGridItem from '../components/RecipeGridItem';
 
 export default function Recipe() {
   const [activeTab, setActiveTab] = useState("all");
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 12;
   const navigate = useNavigate();
   const { temperature, condition } = useWeather();
   
   const { data: getCategoryRecipe } = useGetCategoryRecipe();
-  const { data: recipeResponse, isPending: pendingRecipe } = useGetRecipe(activeTab);
+  const { data: recipeResponse, isPending: pendingRecipe, isFetching } = useGetRecipe(activeTab, currentPage, pageSize);
 
   // Logic xác định trạng thái thời tiết
   const weatherMood = useMemo(() => {
@@ -90,7 +92,10 @@ export default function Recipe() {
         {categoriesWithAll.map((item) => (
           <button
             key={item._id}
-            onClick={() => setActiveTab(item._id)}
+            onClick={() => {
+              setActiveTab(item._id);
+              setCurrentPage(1);
+            }}
             className={`
               px-8 py-2.5 rounded-full whitespace-nowrap text-sm font-bold transition-all duration-300
               ${activeTab === item._id 
@@ -202,16 +207,32 @@ export default function Recipe() {
             <div className="w-2 h-8 bg-[#E25822] rounded-full"></div>
             <h2 className="text-2xl font-black text-[#5C4033] uppercase">Món mới cập nhật</h2>
           </div>
-          {pendingRecipe && <Spin indicator={<LoadingOutlined style={{ color: '#E25822' }} spin />} />}
+          {isFetching && <Spin indicator={<LoadingOutlined style={{ color: '#E25822' }} spin />} />}
         </div>
 
         {listRecipes.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-8">
+          <div className="space-y-10">
+          <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-8 transition-opacity ${isFetching ? "opacity-60 pointer-events-none" : ""}`}>
             {listRecipes.map((item) => (
               <div key={item._id} className="transform hover:-translate-y-3 transition-all duration-500">
                 <RecipeGridItem item={item} />
               </div>
             ))}
+          </div>
+          {(recipeResponse?.pagination?.totalItems || 0) > pageSize && (
+            <div className="flex justify-center">
+              <Pagination
+                current={currentPage}
+                pageSize={pageSize}
+                total={recipeResponse?.pagination?.totalItems || 0}
+                showSizeChanger={false}
+                onChange={(page) => {
+                  setCurrentPage(page);
+                  window.scrollTo({ top: 0, behavior: "smooth" });
+                }}
+              />
+            </div>
+          )}
           </div>
         ) : (
           <div className="py-24 bg-white rounded-[40px] border border-dashed border-gray-200">

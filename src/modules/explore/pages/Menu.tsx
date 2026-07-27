@@ -1,5 +1,5 @@
 import { useState, useMemo, useRef } from 'react';
-import { Spin, Empty } from 'antd';
+import { Spin, Empty, Pagination } from 'antd';
 import { 
   AppstoreOutlined, 
   FireOutlined,
@@ -12,9 +12,11 @@ import ListMenuItem from '../components/ListMenuItem';
 
 export default function Menu() {
   const [activeTab, setActiveTab] = useState("all");
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 12;
   
   const { data: getCategoryMenu } = useGetCategoryMenu();
-  const { data: menuResponse, isPending: pendingMenu } = useGetMenu(activeTab);
+  const { data: menuResponse, isPending: pendingMenu, isFetching } = useGetMenu(activeTab, currentPage, pageSize);
   
   const categoriesWithAll = useMemo(() => {
     const allTab = { 
@@ -37,6 +39,7 @@ export default function Menu() {
 
   const handleChangeCategory = (id) => {
     setActiveTab(id);
+    setCurrentPage(1);
   };
 
   return (
@@ -80,12 +83,29 @@ export default function Menu() {
           <Spin size="large" tip="Đang tìm mâm cơm ngon..." />
         </div>
       ) : listMenus.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="space-y-10">
+        <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 transition-opacity ${isFetching ? "opacity-60 pointer-events-none" : ""}`}>
           {listMenus.map((item) => (
             <div key={item._id} className="transform hover:-translate-y-2 transition-transform duration-300">
               <ListMenuItem item={item} />
             </div>
           ))}
+        </div>
+        {isFetching && <div className="flex justify-center"><Spin size="small" /></div>}
+        {(menuResponse?.pagination?.totalItems || 0) > pageSize && (
+          <div className="flex justify-center">
+            <Pagination
+              current={currentPage}
+              pageSize={pageSize}
+              total={menuResponse?.pagination?.totalItems || 0}
+              showSizeChanger={false}
+              onChange={(page) => {
+                setCurrentPage(page);
+                window.scrollTo({ top: 0, behavior: "smooth" });
+              }}
+            />
+          </div>
+        )}
         </div>
       ) : (
         <div className="py-20 bg-white rounded-[40px] border border-dashed border-orange-200">

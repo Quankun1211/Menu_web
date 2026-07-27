@@ -29,7 +29,7 @@ export default function Product() {
 
   const { data: getAllCategory } = useGetCategory();
 
-  const { data: productsData, isPending } = useGetProductByRegion({
+  const { data: productsData, isPending, isFetching } = useGetProductByRegion({
     region: selectedRegion,
     categoryId: activeTab === 'all' ? undefined : activeTab,
     sort,
@@ -147,13 +147,14 @@ export default function Product() {
             </div>
           ) : products.length > 0 ? (
             <div className="space-y-12">
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6">
+              <div className={`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6 transition-opacity ${isFetching ? "opacity-60 pointer-events-none" : ""}`}>
                 {products.map((product: any) => (
                   <div key={product._id} className="hover:-translate-y-2 transition-transform duration-500">
                     <ExploreProductItems product={product} />
                   </div>
                 ))}
               </div>
+              {isFetching && <div className="flex justify-center"><Spin size="small" /></div>}
 
               <div className="flex justify-center pb-10">
                 <div className="bg-white px-8 py-4 rounded-full shadow-sm border border-[#E8C5A8]/20">

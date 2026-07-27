@@ -10,7 +10,7 @@ export default function SalePage() {
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 12;
 
-  const { data, isPending } = useGetShockDeals(currentPage, pageSize);
+  const { data, isPending, isFetching } = useGetShockDeals(currentPage, pageSize);
   const productsList = (data as any)?.data || [];
 
   const handlePageChange = (page) => {
@@ -65,18 +65,19 @@ export default function SalePage() {
           </div>
         ) : (
           <>
-            <Row gutter={[24, 32]}>
+            <Row gutter={[24, 32]} className={isFetching ? "opacity-60 pointer-events-none transition-opacity" : "transition-opacity"}>
               {productsList.map((product) => (
                 <Col xs={12} sm={12} md={8} lg={6} key={product._id}>
                   <ProductCard product={product} />
                 </Col>
               ))}
             </Row>
+            {isFetching && <div className="flex justify-center mt-6"><Spin size="small" /></div>}
 
             <div className="flex justify-center mt-16">
               <Pagination 
                 current={currentPage} 
-                total={data?.pagination.totalPages || 0} 
+                total={data?.pagination.totalItems || 0}
                 pageSize={pageSize}
                 onChange={handlePageChange}
                 showSizeChanger={false}

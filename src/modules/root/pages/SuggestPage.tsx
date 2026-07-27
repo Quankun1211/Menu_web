@@ -10,7 +10,7 @@ export default function SuggestionPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 12;
 
-  const { data: products, pagination, isPending } = useGetSuggestionProducts(currentPage, pageSize);
+  const { data: products, pagination, isPending, isFetching } = useGetSuggestionProducts(currentPage, pageSize);
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -56,13 +56,14 @@ export default function SuggestionPage() {
           </div>
         ) : (
           <>
-            <Row gutter={[24, 24]}>
+            <Row gutter={[24, 24]} className={isFetching ? "opacity-60 pointer-events-none transition-opacity" : "transition-opacity"}>
               {products?.data.map((product) => (
                 <Col xs={12} sm={12} md={8} lg={6} key={product._id}>
                   <ProductCard product={product} />
                 </Col>
               ))}
             </Row>
+            {isFetching && <div className="flex justify-center mt-6"><Spin size="small" /></div>}
 
             <div className="flex justify-center mt-16">
               <Pagination 

@@ -17,10 +17,13 @@ import useAddToCart from "../../../modules/cart/hooks/useAddToCart";
 import useGetSuggestionProducts from "../../../modules/root/hooks/useGetSuggestionProducts";
 import WishListItem from "../components/WishListItem";
 import { useNavigate } from "react-router";
+import { Pagination } from "antd";
 
 export default function Wishlist() {
   const navigate = useNavigate();
-  const { data: getWishList, isPending: wishListPending } = useGetWishList();
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 10;
+  const { data: getWishList, isPending: wishListPending, isFetching } = useGetWishList(currentPage, pageSize);
   
   const { data: suggestionResponse, isPending: isSuggestionPending } = useGetSuggestionProducts(1, 8);
 
@@ -83,7 +86,7 @@ export default function Wishlist() {
         <div className="flex items-center gap-2">
           <Heart className="h-5 w-5 text-[#F26522] fill-[#F26522]" />
           <h1 className="text-lg font-bold text-gray-800">
-            Danh sách yêu thích ({getWishList?.data?.length ?? 0})
+            Danh sách yêu thích ({getWishList?.pagination?.totalItems ?? 0})
           </h1>
         </div>
 
@@ -103,7 +106,7 @@ export default function Wishlist() {
         )}
       </div>
 
-      <div className="grid grid-cols-1 gap-4">
+      <div className={`grid grid-cols-1 gap-4 transition-opacity ${isFetching ? "opacity-60 pointer-events-none" : ""}`}>
         {getWishList?.data?.map((item) => (
           <WishListItem
             key={item._id}
@@ -132,6 +135,21 @@ export default function Wishlist() {
           </div>
         )}
       </div>
+
+      {(getWishList?.pagination?.totalItems || 0) > pageSize && (
+        <div className="flex justify-center mt-8">
+          <Pagination
+            current={currentPage}
+            total={getWishList?.pagination?.totalItems || 0}
+            pageSize={pageSize}
+            showSizeChanger={false}
+            onChange={(page) => {
+              setSelectedItems([]);
+              setCurrentPage(page);
+            }}
+          />
+        </div>
+      )}
 
       {/* Suggestion Section */}
       <div className="mt-16 bg-gray-50/50 rounded-3xl p-6 border border-dashed border-gray-200">

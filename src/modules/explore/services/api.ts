@@ -10,6 +10,8 @@ type GetProductByCategoryParams = {
 type GetProductSpecialByRegionParams = {
   region: string;
   sort?: string;
+  page?: number;
+  limit?: number;
 };
 
 export const onGetProductByCategory = async (
@@ -54,26 +56,24 @@ export const onGetProductByRegion = async (
 };
 
 export const onGetMenuApi = async (
-  categoryId: string
-): Promise<BackendResponse<MenuResponse[]>> => {
-  const isAll = !categoryId || categoryId === 'all';
-  const url = isAll 
-    ? "/menu/my-menu/get" 
-    : `/menu/my-menu/get?categoryId=${categoryId}`;
-    
-  const res = await api.get(url);
+  categoryId: string,
+  page = 1,
+  limit = 12,
+): Promise<PaginatedBackendResponse<MenuResponse[]>> => {
+  const res = await api.get("/menu/my-menu/get", {
+    params: { categoryId, page, limit },
+  });
   return res.data;
 };
 
 export const onGetRecipeApi = async (
-  categoryId: string
-): Promise<BackendResponse<RecipeDetailResponse[]>> => {
-  const isAll = !categoryId || categoryId === 'all';
-  const url = isAll 
-    ? "/menu/recipe/get-by-category" 
-    : `/menu/recipe/get-by-category?categoryId=${categoryId}`;
-    
-  const res = await api.get(url);
+  categoryId: string,
+  page = 1,
+  limit = 12,
+): Promise<PaginatedBackendResponse<RecipeDetailResponse[]>> => {
+  const res = await api.get("/menu/recipe/get-by-category", {
+    params: { categoryId, page, limit },
+  });
   return res.data;
 };
 
@@ -113,11 +113,13 @@ export const onTrackView = async (categoryId: string) => {
 
 export const onGetProductSpecialByRegion = async (
   params?: GetProductSpecialByRegionParams
-): Promise<BackendResponse<ProductResponse[]>> => {
+): Promise<PaginatedBackendResponse<ProductResponse[]>> => {
   const res = await api.get("/special/get", {
     params: {
       region: params?.region,
       sort: params?.sort,
+      page: params?.page,
+      limit: params?.limit,
     },
   });
 

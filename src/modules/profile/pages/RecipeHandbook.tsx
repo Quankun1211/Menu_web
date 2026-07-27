@@ -17,16 +17,19 @@ import useDeleteMyRecipe from '../hooks/useDeleteMyRecipe';
 import useGetSavedRecipe from '../hooks/useGetSavedRecipe';
 import RenderMyRecipe from '../components/RenderMyRecipe';
 import RenderSavedRecipe from '../components/RenderSavedRecipe';
+import { Pagination } from 'antd';
 
 export default function RecipeHandbook() {
   const [activeTab, setActiveTab] = useState('mine');
+  const [minePage, setMinePage] = useState(1);
+  const [savedPage, setSavedPage] = useState(1);
+  const pageSize = 10;
   const [isMenuVisible, setMenuVisible] = useState(false);
   const [selectedRecipe, setSelectedRecipe] = useState<any>(null);
   const navigate = useNavigate();
 
-  const { data: myRecipes, isPending: myRecipesPending } = useGetMyRecipe();
-  const { data: savedRecipes, isPending: savedRecipesPending } = useGetSavedRecipe();
-  console.log(savedRecipes?.data);
+  const { data: myRecipes, isPending: myRecipesPending, isFetching: myRecipesFetching } = useGetMyRecipe(minePage, pageSize);
+  const { data: savedRecipes, isPending: savedRecipesPending, isFetching: savedRecipesFetching } = useGetSavedRecipe(savedPage, pageSize);
   
   const { mutate: deleteMyRecipe } = useDeleteMyRecipe();
 
@@ -115,11 +118,22 @@ export default function RecipeHandbook() {
                   <span className="text-[10px] font-black text-[#D35400] bg-orange-50 px-2 py-1 rounded">MỚI NHẤT</span>
                 </div>
 
-                <div className="grid gap-4">
+                <div className={`grid gap-4 transition-opacity ${myRecipesFetching ? "opacity-60 pointer-events-none" : ""}`}>
                   {myRecipes.data.map((item: any) => (
                     <RenderMyRecipe key={item._id} item={item} openMenu={openMenu} />
                   ))}
                 </div>
+                {(myRecipes.pagination?.totalItems || 0) > pageSize && (
+                  <div className="flex justify-center">
+                    <Pagination
+                      current={minePage}
+                      total={myRecipes.pagination?.totalItems || 0}
+                      pageSize={pageSize}
+                      showSizeChanger={false}
+                      onChange={setMinePage}
+                    />
+                  </div>
+                )}
                 
                 {/* Draft Box */}
                 <div className="flex items-center gap-4 bg-[#F8F9F8] p-4 rounded-2xl border border-dashed border-gray-200 mt-8">
@@ -141,10 +155,21 @@ export default function RecipeHandbook() {
                 <Loader2 className="animate-spin text-[#D35400]" size={40} />
               </div>
             ) : savedRecipes?.data && savedRecipes.data.length > 0 ? (
-              <div className="grid gap-4">
+              <div className={`grid gap-4 transition-opacity ${savedRecipesFetching ? "opacity-60 pointer-events-none" : ""}`}>
                 {savedRecipes.data.map((item: any) => (
                   <RenderSavedRecipe key={item._id} item={item} />
                 ))}
+                {(savedRecipes.pagination?.totalItems || 0) > pageSize && (
+                  <div className="flex justify-center">
+                    <Pagination
+                      current={savedPage}
+                      total={savedRecipes.pagination?.totalItems || 0}
+                      pageSize={pageSize}
+                      showSizeChanger={false}
+                      onChange={setSavedPage}
+                    />
+                  </div>
+                )}
               </div>
             ) : renderEmptyState('saved')}
           </div>

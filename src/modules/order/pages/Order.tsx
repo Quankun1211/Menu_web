@@ -7,6 +7,7 @@ import AllOrders from './AllOrder';
 import { ProcessingOrders, ShippingOrders} from './Processing';
 import CancelledOrders from './CancelledOrder';
 import CompletedOrders from './CompletedOrder';
+import { Pagination, Spin } from 'antd';
 
 const TABS = [
   { id: 'all', label: 'Tất cả' },
@@ -18,10 +19,12 @@ const TABS = [
 
 export default function OrdersPage() {
   const [activeTab, setActiveTab] = useState('all');
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 10;
   const navigate = useNavigate();
   const { data: meData } = useGetMe(false);
   const isLoggedIn = !!meData?.data;
-  const { data, isPending } = useGetMyOrders(isLoggedIn);
+  const { data, isPending, isFetching } = useGetMyOrders(isLoggedIn, currentPage, pageSize, activeTab);
 
   const orders = data?.data ?? [];
 
@@ -50,7 +53,10 @@ export default function OrdersPage() {
         {TABS.map((tab) => (
           <button
             key={tab.id}
-            onClick={() => setActiveTab(tab.id)}
+            onClick={() => {
+              setActiveTab(tab.id);
+              setCurrentPage(1);
+            }}
             className={`flex-1 min-w-fit px-6 py-4 text-sm font-bold transition-colors border-b-2 ${
               activeTab === tab.id 
               ? 'text-[#F26522] border-[#F26522]' 
@@ -62,13 +68,25 @@ export default function OrdersPage() {
         ))}
       </div>
 
-      <div className="p-4">
+      <div className={`p-4 transition-opacity ${isFetching ? "opacity-60 pointer-events-none" : ""}`}>
         {activeTab === 'all' && <AllOrders orders={orders} />}
         {activeTab === 'delivered' && <CompletedOrders orders={orders.filter(o => o.status === 'delivered')} />}
         {activeTab === 'pending' && <ProcessingOrders orders={orders.filter(o => o.status === 'pending')} />}
         {activeTab === 'shipping' && <ShippingOrders orders={orders.filter(o => o.status === 'shipping')} />}
         {activeTab === 'cancelled' && <CancelledOrders orders={orders.filter(o => o.status === 'cancelled')} />}
       </div>
+      {isFetching && !isPending && <div className="flex justify-center py-2"><Spin size="small" /></div>}
+      {(data?.pagination?.totalItems || 0) > pageSize && (
+        <div className="flex justify-center pb-8">
+          <Pagination
+            current={currentPage}
+            pageSize={pageSize}
+            total={data?.pagination?.totalItems || 0}
+            showSizeChanger={false}
+            onChange={setCurrentPage}
+          />
+        </div>
+      )}
     </div>
   );
 }

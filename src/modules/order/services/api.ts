@@ -1,11 +1,11 @@
-import { BackendResponse } from "@/libs/shared/types/backend-response";
+import { BackendResponse, PaginatedBackendResponse } from "@/libs/shared/types/backend-response";
 import { OrderResponse, OrderDetailResponse } from "../types/api-response";
 import api from "../../../services/axios";
 import { CancelOrderRequest } from "../types/api-request";
-export const onGetMyOrders = async (): Promise<
-  BackendResponse<OrderResponse[]>
+export const onGetMyOrders = async (page = 1, limit = 10, status = "all"): Promise<
+  PaginatedBackendResponse<OrderResponse[]>
 > => {
-  const res = await api.get("/order/get");
+  const res = await api.get("/order/get", { params: { page, limit, status } });
   return res.data;
 };
 

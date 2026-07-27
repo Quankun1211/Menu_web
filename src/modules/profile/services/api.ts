@@ -1,4 +1,4 @@
-import { BackendResponse } from "@/libs/shared/types/backend-response";
+import { BackendResponse, PaginatedBackendResponse } from "@/libs/shared/types/backend-response";
 import api from "../../../services/axios";
 import { MyCouponResponse, MyRecipeDetailResponse, MyRecipeResponse, RemoveFavouriteItemsResponse, WalletResponse, WishListResponse } from "../types/api-response";
 import { get } from "react-native/Libraries/TurboModule/TurboModuleRegistry";
@@ -36,8 +36,10 @@ export const onCreateMyRecipe = async (
 };
 
 export const onGetMyRecipes = async (
-): Promise<BackendResponse<MyRecipeResponse[]>> => {
-  const res = await api.get("/menu/recipe/get-my-recipes");
+  page = 1,
+  limit = 10,
+): Promise<PaginatedBackendResponse<MyRecipeResponse[]>> => {
+  const res = await api.get("/menu/recipe/get-my-recipes", { params: { page, limit } });
   return res.data;
 };
 
@@ -68,15 +70,17 @@ export const onDeleteMyRecipe = async (
 };
 
 export const onGetMySavedRecipes = async (
-): Promise<BackendResponse<RecipeResponse[]>> => {
-  const res = await api.get("/menu/recipe/saved-list");
+  page = 1,
+  limit = 10,
+): Promise<PaginatedBackendResponse<RecipeResponse[]>> => {
+  const res = await api.get("/menu/recipe/saved-list", { params: { page, limit } });
   return res.data;
 };
 
-export const onGetWishListApi = async (): Promise<
-  BackendResponse<WishListResponse>
+export const onGetWishListApi = async (page = 1, limit = 10): Promise<
+  PaginatedBackendResponse<WishListResponse>
 > => {
-  const { data } = await api.get("/favourite/get-favourite");
+  const { data } = await api.get("/favourite/get-favourite", { params: { page, limit } });
   return data;
 };
 export const onRemoveWishListApi = async (

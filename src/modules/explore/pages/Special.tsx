@@ -7,7 +7,7 @@ import {
   InboxOutlined,
   LoadingOutlined 
 } from "@ant-design/icons";
-import { Spin, message, Empty } from "antd";
+import { Spin, message, Empty, Pagination } from "antd";
 
 import useGetProductSpecial from '../hooks/useGetProductSpectial';
 import useAddToCart from '../../cart/hooks/useAddToCart';
@@ -24,13 +24,17 @@ const REGIONS = [
 export default function SpecialProduct() {
   const navigate = useNavigate();
   const [selectedRegion, setSelectedRegion] = useState('all');
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 12;
   
   // Thêm state để theo dõi ID sản phẩm đang được thêm
   const [addingId, setAddingId] = useState(null);
 
-  const { data: productsData, isPending } = useGetProductSpecial({
+  const { data: productsData, isPending, isFetching } = useGetProductSpecial({
     region: selectedRegion,
-    sort: 'newest'
+    sort: 'newest',
+    page: currentPage,
+    limit: pageSize,
   });
 
   const { mutate: addToCart } = useAddToCart();
@@ -72,7 +76,10 @@ export default function SpecialProduct() {
           {REGIONS.map((region) => (
             <button
               key={region.key}
-              onClick={() => setSelectedRegion(region.key)}
+              onClick={() => {
+                setSelectedRegion(region.key);
+                setCurrentPage(1);
+              }}
               className={`px-8 py-2.5 rounded-full text-[12px] font-black transition-all uppercase tracking-[2px] ${
                 selectedRegion === region.key
                   ? "bg-[#D16D2F] text-white shadow-lg"
@@ -100,7 +107,8 @@ export default function SpecialProduct() {
           <p className="text-[#8B5E3C] font-bold animate-pulse uppercase text-xs tracking-widest">Đang bày biện gian hàng...</p>
         </div>
       ) : products.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+        <div className="space-y-10">
+        <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 transition-opacity ${isFetching ? "opacity-60 pointer-events-none" : ""}`}>
           {products.map((item) => {
             const isThisItemAdding = addingId === item._id;
             
@@ -178,6 +186,22 @@ export default function SpecialProduct() {
               </div>
             );
           })}
+        </div>
+        {isFetching && <div className="flex justify-center"><Spin size="small" /></div>}
+        {(productsData?.pagination?.totalItems || 0) > pageSize && (
+          <div className="flex justify-center">
+            <Pagination
+              current={currentPage}
+              pageSize={pageSize}
+              total={productsData?.pagination?.totalItems || 0}
+              showSizeChanger={false}
+              onChange={(page) => {
+                setCurrentPage(page);
+                window.scrollTo({ top: 0, behavior: "smooth" });
+              }}
+            />
+          </div>
+        )}
         </div>
       ) : (
         <div className="py-24 bg-[#faece1]/50 rounded-[60px] border-2 border-dashed border-[#E8C5A8]">
