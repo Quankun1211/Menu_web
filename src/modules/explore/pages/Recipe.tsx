@@ -212,7 +212,7 @@ export default function Recipe() {
 
         {listRecipes.length > 0 ? (
           <div className="space-y-10">
-          <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-8 transition-opacity ${isFetching ? "opacity-60 pointer-events-none" : ""}`}>
+          <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-7 transition-opacity ${isFetching ? "opacity-60 pointer-events-none" : ""}`}>
             {listRecipes.map((item) => (
               <div key={item._id} className="transform hover:-translate-y-3 transition-all duration-500">
                 <RecipeGridItem item={item} />

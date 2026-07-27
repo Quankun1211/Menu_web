@@ -118,13 +118,13 @@ export default function SpecialProduct() {
                 className="flex flex-col bg-[#fffaf5] rounded-t-[70px] rounded-b-2xl overflow-hidden border border-[#E8C5A8]/50 shadow-sm hover:shadow-2xl transition-all duration-500 group"
               >
                 <div 
-                  className="relative aspect-3/4 overflow-hidden cursor-pointer"
+                  className="relative aspect-4/3 overflow-hidden cursor-pointer bg-[#f5eadf]"
                   onClick={() => navigate(`/explore/special-detail/${item.slug}`, { state: { productId: item._id } })}
                 >
                   <img 
                     src={item.images} 
                     alt={item.name}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000"
+                    className="h-full w-full rounded-t-[58px] rounded-b-xl object-contain p-3 transition-transform duration-500 group-hover:scale-[1.03]"
                   />
                   
                   {item.salePercent && (
