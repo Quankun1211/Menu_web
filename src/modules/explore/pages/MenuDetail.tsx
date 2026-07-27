@@ -14,6 +14,7 @@ import useGetMe from '../../../hooks/useGetMe';
 import { formatVND } from "../../../utils/helper";
 import MenuItems from '../components/MenuItems';
 import { useCheckoutStore } from '../../../store/useCheckoutStore';
+import PageMeta from '../../../components/common/PageMeta';
 
 export default function MenuDetailScreen() {
     const location = useLocation();
@@ -28,7 +29,7 @@ export default function MenuDetailScreen() {
     const { setCheckoutData } = useCheckoutStore();
 
     const getSafeProductId = (ing) => {
-        if (ing.itemType === 'Product') return ing.ingredientId?._id;
+        if (ing.itemType === 'Product' || ing.itemType === 'Special') return ing.ingredientId?._id;
         return ing.ingredientId?.productId;
     };
 
@@ -55,7 +56,7 @@ export default function MenuDetailScreen() {
     const groupedCheckoutData = useMemo(() => {
         const filtered = purchasableIngredients.filter(ing => {
             const detail = ing.ingredientId;
-            const isProduct = ing.itemType === 'Product' || !!detail?.productId;
+            const isProduct = ['Product', 'Special'].includes(ing.itemType) || !!detail?.productId;
             return isProduct && selectedItems.includes(getSafeProductId(ing));
         });
 
@@ -112,6 +113,21 @@ export default function MenuDetailScreen() {
 
     return (
         <div className="min-h-screen bg-[#F9F7F5] pb-20">
+            <PageMeta
+                title={`${menuDetail?.data?.title || "Thực đơn món Việt"} | Bếp Việt`}
+                description={menuDetail?.data?.description || "Danh sách món, công thức và nguyên liệu cho thực đơn Việt."}
+                image={menuDetail?.data?.image}
+                structuredData={{
+                    "@context": "https://schema.org",
+                    "@type": "ItemList",
+                    name: menuDetail?.data?.title,
+                    description: menuDetail?.data?.description,
+                    numberOfItems: menuDetail?.data?.recipes?.length || 0,
+                    itemListElement: (menuDetail?.data?.recipes || []).map((recipe, index) => ({
+                        "@type": "ListItem", position: index + 1, name: recipe.name,
+                    })),
+                }}
+            />
             <div className="max-w-7xl mx-auto px-6 py-8 grid grid-cols-1 lg:grid-cols-12 gap-8">
                 
                 <div className="lg:col-span-8 space-y-6">
@@ -125,8 +141,8 @@ export default function MenuDetailScreen() {
                                         <h3 className="text-lg font-black text-[#5C4033]">{recipe.name}</h3>
                                     </div>
                                     <button 
-                                        onClick={() => navigate(`/recipe/${recipe._id}`)}
-                                        className="text-xs font-bold text-orange-400 hover:text-orange-600 transition-colors"
+                                        onClick={() => navigate(`/explore/recipe-detail/${recipe.slug}`, {state: {title: recipe._id}})}
+                                        className="text-xs font-bold cursor-pointer text-orange-400 hover:text-orange-600 transition-colors"
                                     >
                                         <BookOutlined /> Xem cách chế biến
                                     </button>

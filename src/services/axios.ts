@@ -1,76 +1,86 @@
-import axios from "axios"
-import { ApiUrls } from "../config/url"
-import {
-    getRefreshToken,
-    getToken,
-    removeRefreshToken,
-    removeToken,
-    setRefreshToken,
-    setToken
-} from "./../../src/utils/token"
+import axios from "axios";
+import { ApiUrls } from "../config/url";
 
 const api = axios.create({
-    baseURL: ApiUrls.apiBaseUrl,
-    withCredentials: true
-})
+  baseURL: ApiUrls.apiBaseUrl,
+  withCredentials: true,
+});
 
-api.defaults.headers.post["Content-Type"] = "application/json"
+api.defaults.headers.post["Content-Type"] = "application/json";
 
-api.interceptors.request.use(
-    async (config) => { 
-        const token = await getToken(); 
-        if (token) {
-            config.headers["Authorization"] = `Bearer ${token}`;
-        }
-        return config;
-    },
-    (error) => {
-        return Promise.reject(error);
-    }
-);
+let csrfToken: string | undefined;
+let csrfRequest: Promise<string | undefined> | undefined;
+
+const readCookie = (name: string) =>
+  document.cookie
+    .split("; ")
+    .find((row) => row.startsWith(`${name}=`))
+    ?.split("=")[1];
+
+const loadCsrfToken = async () => {
+  csrfToken = csrfToken || readCookie("csrf_token");
+  if (csrfToken) return csrfToken;
+  if (!csrfRequest) {
+    csrfRequest = axios
+      .get(`${ApiUrls.apiBaseUrl}/auth/csrf`, { withCredentials: true })
+      .then((response) => response.data?.data?.csrfToken as string | undefined)
+      .finally(() => {
+        csrfRequest = undefined;
+      });
+  }
+  csrfToken = await csrfRequest;
+  return csrfToken;
+};
+
+api.interceptors.request.use(async (config) => {
+  const method = (config.method || "get").toLowerCase();
+  const isSafeMethod = ["get", "head", "options"].includes(method);
+  const isPublicAuthMutation = [
+    "/auth/login",
+    "/auth/register",
+    "/auth/verify-otp",
+    "/auth/resend-otp",
+    "/auth/forgot-password",
+    "/auth/reset-password",
+    "/auth/refresh",
+  ].some((path) => config.url?.includes(path));
+  if (!isSafeMethod && !isPublicAuthMutation) {
+    const token = await loadCsrfToken();
+    if (token) config.headers["X-CSRF-Token"] = decodeURIComponent(token);
+  }
+  return config;
+});
 
 api.interceptors.response.use(
-    (response) => {
-        return response
-    },
-    async (error) => {
-        const originnalRequest = error.config
-        if(
-            error.response?.status === 401 &&
-            originnalRequest.url !== "/auth/refresh" &&
-            originnalRequest.url !== "/auth/login" &&
-            originnalRequest.url !== "/auth/logout" &&
-            originnalRequest.url !== "/auth/register" 
-        ) {
-            const refreshToken = getRefreshToken()
-            if(refreshToken) {
-                try {
-                    delete originnalRequest.headers["Authorization"]
+  (response) => {
+    const returnedToken = response.data?.data?.csrfToken;
+    if (returnedToken) csrfToken = returnedToken;
+    return response;
+  },
+  async (error) => {
+    const originalRequest = error.config;
+    const isAuthRoute = ["/auth/login", "/auth/logout", "/auth/register", "/auth/refresh"]
+      .some((path) => originalRequest?.url?.includes(path));
 
-                    const response = await axios.post(
-                        `${ApiUrls.apiBaseUrl}/auth/refresh`, {token: refreshToken}
-                    )
+    const isOptionalMeRequest = originalRequest?.url?.includes("/user/me");
 
-                    if(response.status === 200 && response.data?.data?.access_token) {
-                        const {access_token, refresh_token} = response.data.data
-                        setToken(access_token)
-                        setRefreshToken(refresh_token)
-
-                        originnalRequest.headers["Authorization"] = "Bearer " + access_token
-                        return axios(originnalRequest)
-                    }
-                } catch (refreshError: any) {
-                    removeToken()
-                    removeRefreshToken()
-                    window.location.href = "/account/login"
-                    return Promise.reject(refreshError.response.data)
-                }
-            } else {
-                return Promise.reject(error.response.data)
-            }
-        }
-        return Promise.reject(error.response.data)
+    if (error.response?.status === 401 && !isAuthRoute && !isOptionalMeRequest && !originalRequest?._retry) {
+      originalRequest._retry = true;
+      try {
+        const refreshResponse = await axios.post(
+          `${ApiUrls.apiBaseUrl}/auth/refresh`,
+          {},
+          { withCredentials: true },
+        );
+        csrfToken = refreshResponse.data?.data?.csrfToken || csrfToken;
+        return api(originalRequest);
+      } catch (refreshError: any) {
+        window.location.href = "/account/login";
+        return Promise.reject(refreshError.response?.data || refreshError);
+      }
     }
-)
+    return Promise.reject(error.response?.data || error);
+  },
+);
 
-export default api
+export default api;

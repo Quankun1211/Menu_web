@@ -8,7 +8,7 @@ interface WeatherState {
   error: string | null;
 }
 
-const API_KEY = '6dac6e3742d03bfe2c3ba3fb2dce1dd8'; 
+const API_KEY = import.meta.env.VITE_OPENWEATHER_API_KEY || "";
 
 export const useWeather = () => {
   const [weatherData, setWeatherData] = useState<WeatherState>({

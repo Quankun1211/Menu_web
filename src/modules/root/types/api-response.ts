@@ -85,7 +85,7 @@ export type ExtraInfo =
 export interface IngredientResponse {
   _id: string;
   ingredientId: IngredientIdDetail;
-  itemType: 'Product' | 'Ingredient';
+  itemType: 'Product' | 'Special' | 'Ingredient';
   quantity: number | string;
   note?: string;
 }

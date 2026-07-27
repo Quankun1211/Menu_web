@@ -24,7 +24,7 @@ import {
 import useAddAddress from '../hooks/useAddAddress';
 import debounce from 'lodash/debounce';
 
-const GOONG_API_KEY = "AkqTvBuwzoIlNaku55keEDNlo3nPSlteAc36yRsE";
+const GOONG_API_KEY = import.meta.env.VITE_GOONG_API_KEY || "";
 
 export default function AddAddressPage() {
   const navigate = useNavigate();

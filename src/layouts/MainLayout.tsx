@@ -6,7 +6,9 @@ import FloatingChatbot from "../components/common/FloatingModal";
 import ChatBotWindow from "../components/common/Chatbot"
 import Footer from "../components/footer/Footer";
 import TestInstructionsModal from "../components/common/TestInstruction";
-import PageMeta from "../components/common/PageMeta";
+import RouteSeo from "../components/common/RouteSeo";
+import SeoBreadcrumbs from "../components/common/SeoBreadcrumbs";
+import CommerceTrustBar from "../components/common/CommerceTrustBar";
 function MainLayout() {
   const [isChatOpen, setIsChatOpen] = useState(false);
 
@@ -25,8 +27,9 @@ function MainLayout() {
 
   return (
     <div className="flex flex-col h-screen overflow-hidden bg-[#faece1]">
-      <PageMeta title="Bếp Việt" description="Chào mừng bạn quay trở lại với Bếp Việt" />
+      <RouteSeo />
       <Header />
+      <CommerceTrustBar />
 
       <main 
         ref={scrollRef}
@@ -43,6 +46,7 @@ function MainLayout() {
         />
 
         <div className="max-w-7xl mx-auto px-4 md:px-10 lg:px-10 py-8 relative z-10 min-h-[calc(100vh-80px)]">
+          <SeoBreadcrumbs />
           <Outlet />
         </div>
 

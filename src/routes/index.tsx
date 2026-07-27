@@ -10,6 +10,7 @@ import { cartRouter } from "../modules/cart/routes";
 import { checkoutRouter } from "../modules/checkout/routes";
 import { orderRouter } from "../modules/order/routes";
 import { profileRouter } from "../modules/profile/routes";
+import NotFound from "../components/common/NotFound";
 
 const AuthLayoutWithSuspense = () => (
   <Suspense fallback={<Fallback />}>
@@ -52,6 +53,7 @@ const router = createBrowserRouter([
                     // ...recipeManageRouter,
                     // ...ingredientManageRouter,
                     // ...menuManageRouter
+                    ,{ path: "*", element: <NotFound /> }
                 ]
             }
         ]

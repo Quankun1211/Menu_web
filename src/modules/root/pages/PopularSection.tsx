@@ -1,15 +1,10 @@
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import ProductItem from "../components/ProductItem";
 import useGetPopularProducts from "../hooks/useGetPopularProducts";
 import { ChevronRight } from "lucide-react";
 
 const PopularSection = () => {
-  const navigate = useNavigate();
   const { data: getPopularProducts, isPending } = useGetPopularProducts();
-
-  const handleSeeAll = () => {
-    navigate("/explore/product?sortInit=sold_desc");
-  };
 
   return (
     <section className="py-10 bg-white rounded-3xl px-6 shadow-sm border border-gray-50">
@@ -23,13 +18,13 @@ const PopularSection = () => {
           </p>
         </div>
         
-        <button 
-          onClick={handleSeeAll}
+        <Link
+          to="/explore/product?sortInit=sold_desc"
           className="group flex items-center gap-1 text-orange-600 font-bold hover:text-orange-700 transition-all"
         >
           Xem tất cả 
           <ChevronRight size={20} className="group-hover:translate-x-1 transition-transform" />
-        </button>
+        </Link>
       </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">

@@ -30,7 +30,7 @@ export default function SignUp() {
 
   return (
     <div className="flex min-h-screen bg-white">
-      <PageMeta title="Đăng ký - Bếp Việt" description="Tham gia cộng đồng Bếp Việt ngay hôm nay" />
+      <PageMeta title="Đăng ký - Bếp Việt" description="Tạo tài khoản Bếp Việt" indexable={false} />
       <div className="w-full lg:w-1/2 flex flex-col justify-center px-8 md:px-24 lg:px-32 bg-white py-12">
         <div className="mb-8">
           <h2 className="text-3xl font-bold text-gray-900 mb-2">Đăng Ký Tài Khoản</h2>

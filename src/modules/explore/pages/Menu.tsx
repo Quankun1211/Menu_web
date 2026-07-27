@@ -41,6 +41,11 @@ export default function Menu() {
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">
+      <header className="mb-8">
+        <p className="text-xs font-black uppercase tracking-[0.2em] text-[#D16D2F]">Mâm cơm Việt</p>
+        <h1 className="mt-2 text-3xl font-black text-[#5C4033] md:text-4xl">Thực đơn Việt cho gia đình và tiệc</h1>
+        <p className="mt-3 max-w-3xl leading-7 text-[#765746]">Mỗi thực đơn liên kết công thức, nguyên liệu có thể mua và chi phí dự kiến để bạn chuẩn bị bữa ăn thuận tiện hơn.</p>
+      </header>
       <div className="flex items-center gap-3 overflow-x-auto pb-6 scrollbar-hide">
         {categoriesWithAll.map((item) => (
           <button
@@ -61,7 +66,7 @@ export default function Menu() {
       <div className="mb-10 mt-4">
         <div className="flex items-center gap-3 mb-2">
           <FireOutlined className="text-[#D16D2F] text-xl" />
-          <h2 className="text-3xl font-black text-[#5C4033]">
+          <h2 className="text-2xl font-black text-[#5C4033]">
             {activeCategoryInfo?.title || activeCategoryInfo?.name}
           </h2>
         </div>

@@ -23,7 +23,7 @@ const MenuItems = ({ item }) => {
   const displayPrice = details.price || 0;
   const { setCheckoutData } = useCheckoutStore();
   
-  const isInShop = item.itemType === 'Product' || !!details.productId;
+  const isInShop = ['Product', 'Special'].includes(item.itemType) || !!details.productId;
 
   const handleQuickPurchase = () => {
     if (!isLoggedIn) {

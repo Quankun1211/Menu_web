@@ -19,6 +19,7 @@ import SuggestCard from '../components/SuggestCard';
 import FolkTips from '../components/FolkTips';
 import { formatDisplayQuantity } from '../../../utils/helper';
 import { useCheckoutStore } from '../../../store/useCheckoutStore';
+import PageMeta from '../../../components/common/PageMeta';
 
 const RecipeDetail = () => {
   const location = useLocation();
@@ -58,7 +59,7 @@ const RecipeDetail = () => {
   };
 
   const toggleCheck = (item) => {
-    const isBuyable = item.itemType === 'Product';
+    const isBuyable = item.itemType === 'Product' || item.itemType === 'Special';
     if (!isBuyable) return;
 
     const productId = item.ingredientId?._id;
@@ -122,6 +123,29 @@ const RecipeDetail = () => {
 
   return (
     <div className="min-h-screen bg-[#FDFCFB] rounded-2xl">
+      <PageMeta
+        title={`${recipe?.name || "Công thức món Việt"} | Bếp Việt`}
+        description={recipe?.description || "Nguyên liệu và hướng dẫn từng bước cho món Việt tại Bếp Việt."}
+        image={recipe?.image}
+        structuredData={{
+          "@context": "https://schema.org",
+          "@type": "Recipe",
+          name: recipe?.name,
+          description: recipe?.description,
+          image: recipe?.image ? [recipe.image] : undefined,
+          recipeYield: recipe?.meta?.servings,
+          totalTime: recipe?.cookTime ? `PT${recipe.cookTime}M` : undefined,
+          recipeIngredient: [
+            ...(recipe?.ingredients || []).map((item) => `${item.quantity} ${item.ingredientId?.unit || ""} ${item.ingredientId?.name || item.ingredientId?.customName || ""}`.trim()),
+            ...(recipe?.additionalIngredients || []).map((item) => `${item.quantity || ""} ${item.unit || ""} ${item.name}`.trim()),
+          ],
+          recipeInstructions: (recipe?.instructions || []).map((instruction) => ({
+            "@type": "HowToStep",
+            name: instruction.title,
+            text: instruction.description,
+          })),
+        }}
+      />
       <div className="max-w-7xl mx-auto px-6 py-10 grid grid-cols-1 lg:grid-cols-12 gap-12">
         <div className="lg:col-span-7 space-y-12">
           <div className="relative rounded-[40px] overflow-hidden shadow-2xl aspect-video group">
@@ -196,7 +220,7 @@ const RecipeDetail = () => {
                 <div className="space-y-4 mb-8">
                   {recipe?.ingredients?.map((item) => {
                     const productId = item.ingredientId?._id;
-                    const isBuyable = item.itemType === 'Product';
+                    const isBuyable = item.itemType === 'Product' || item.itemType === 'Special';
                     const isChecked = selectedIngredients.some(ing => ing.productId === productId);
                     
                     const originalPrice = item.ingredientId?.price || 0;

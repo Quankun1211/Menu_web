@@ -58,7 +58,7 @@ export default function ResetPasswordPage() {
 
   return (
     <div className="min-h-screen bg-[#F9F7F5] flex flex-col justify-center items-center px-4">
-      <PageMeta title="Đặt lại mật khẩu - Bếp Việt" description="Chào mừng bạn quay trở lại với Bếp Việt" />
+      <PageMeta title="Đặt lại mật khẩu - Bếp Việt" description="Đặt lại mật khẩu tài khoản Bếp Việt" indexable={false} />
       
       <Card className="w-full max-w-md rounded-3xl shadow-xl border-none p-4">
         <div className="mb-8 text-center">

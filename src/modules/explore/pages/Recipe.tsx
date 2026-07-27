@@ -80,6 +80,11 @@ export default function Recipe() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 animate-fadeIn">
+      <header className="mb-8 rounded-[32px] bg-white/70 p-7 shadow-sm ring-1 ring-orange-100">
+        <p className="text-xs font-black uppercase tracking-[0.2em] text-[#E25822]">Nấu món Việt tại nhà</p>
+        <h1 className="mt-2 text-3xl font-black text-[#5C4033] md:text-4xl">Công thức món Việt chuẩn vị, dễ thực hiện</h1>
+        <p className="mt-3 max-w-3xl leading-7 text-gray-600">Xem định lượng, thời gian, khẩu phần và chọn mua trực tiếp những nguyên liệu có sẵn trong cửa hàng.</p>
+      </header>
       {/* Tab Categories */}
       <div className="flex items-center gap-3 overflow-x-auto pb-8 no-scrollbar scroll-smooth">
         {categoriesWithAll.map((item) => (
@@ -151,9 +156,9 @@ export default function Recipe() {
                 <span className="text-[10px] font-black uppercase tracking-[0.2em] text-orange-400">Độ khó: {featuredRecipe.difficulty}</span>
               </div>
               
-              <h1 className="text-3xl md:text-5xl font-black text-[#5C4033] mb-6 leading-tight group-hover:text-[#E25822] transition-colors">
+              <h2 className="text-3xl md:text-5xl font-black text-[#5C4033] mb-6 leading-tight group-hover:text-[#E25822] transition-colors">
                 {featuredRecipe.name}
-              </h1>
+              </h2>
               
               <p className="text-gray-500 text-lg leading-relaxed mb-10 line-clamp-3 font-medium">
                 {featuredRecipe.description || "Khám phá hương vị truyền thống với công thức nấu ăn chuẩn vị Bếp Việt, đơn giản và dễ làm tại nhà."}

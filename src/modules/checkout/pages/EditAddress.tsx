@@ -23,7 +23,7 @@ import useGetAddressDetail from "../hooks/useGetAddressDetail";
 import useUpdateAddress from "../hooks/useUpdateAddress";
 import debounce from 'lodash/debounce';
 
-const GOONG_API_KEY = "AkqTvBuwzoIlNaku55keEDNlo3nPSlteAc36yRsE"; 
+const GOONG_API_KEY = import.meta.env.VITE_GOONG_API_KEY || "";
 
 export default function EditAddressPage() {
   const navigate = useNavigate();

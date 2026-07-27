@@ -19,6 +19,7 @@ import { formatVND } from '../../../utils/helper';
 import useCheckout from '../hooks/useCheckout';
 import useGetMyCoupons from "../hooks/useGetMyCoupons";
 import PromoModal from '../components/PromoModal'; 
+import useShippingFee from '../../../hooks/useShippingFee';
 
 export default function CheckoutPage() {
   const navigate = useNavigate();
@@ -33,6 +34,7 @@ export default function CheckoutPage() {
   const { data: couponsData } = useGetMyCoupons();
   const { data: getAddress, isPending: addressPending } = useGetAddress();
   const { mutate: checkoutApply, isPending: checkoutPending } = useCheckout();
+  const { data: configuredShippingFee = 25000 } = useShippingFee();
 
   const [isConfirmModalVisible, setConfirmModalVisible] = useState(false);
   const [isPromoModalVisible, setPromoModalVisible] = useState(false);
@@ -45,7 +47,7 @@ export default function CheckoutPage() {
   const addresses = getAddress?.data ?? [];
   const displayAddress = selectedAddress || addresses.find((a) => a.isDefault) || addresses[0] || null;
 
-  const shippingFee = 25000;
+  const shippingFee = configuredShippingFee;
   const subTotal = previewRes?.data?.totalAmount ?? 0; 
   
 const finalTotal = Math.max(subTotal + shippingFee - Math.abs(discountValue), 0);
@@ -80,7 +82,6 @@ const finalTotal = Math.max(subTotal + shippingFee - Math.abs(discountValue), 0)
       couponCode: appliedCode,
       source: source as any,
       paymentMethod: paymentMethod,
-      shippingFee: shippingFee,
       platform: "web"
     }, {
       onSuccess: (response) => {

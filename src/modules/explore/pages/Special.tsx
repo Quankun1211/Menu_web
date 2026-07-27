@@ -62,6 +62,11 @@ export default function SpecialProduct() {
 
   return (
     <div className="space-y-12 py-4">
+      <header className="rounded-[32px] bg-white/70 p-7 text-center shadow-sm ring-1 ring-[#E8C5A8]/40">
+        <p className="text-xs font-black uppercase tracking-[0.2em] text-[#D16D2F]">Tinh hoa địa phương</p>
+        <h1 className="mt-2 text-3xl font-black text-[#5C4033] md:text-4xl">Đặc sản Việt Nam ba miền</h1>
+        <p className="mx-auto mt-3 max-w-3xl leading-7 text-[#765746]">Khám phá sản vật tiêu biểu với câu chuyện, nơi sản xuất, cách thưởng thức và giá bán rõ ràng.</p>
+      </header>
       <div className="flex flex-col items-center gap-6">
         <div className="bg-[#f2dbc9] p-1.5 rounded-full border border-[#D16D2F]/20 shadow-inner inline-flex flex-wrap justify-center gap-2">
           {REGIONS.map((region) => (
@@ -82,7 +87,7 @@ export default function SpecialProduct() {
 
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b-2 border-[#D16D2F]/20 pb-6">
         <div>
-          <h2 className="text-3xl font-black text-[#5C4033] uppercase tracking-tighter">
+          <h2 className="text-2xl font-black text-[#5C4033] uppercase tracking-tighter">
             {selectedRegion === 'all' ? 'Sản vật tiêu biểu' : REGIONS.find(r => r.key === selectedRegion)?.label}
           </h2>
           <div className="h-1 w-20 bg-[#D16D2F] mt-2 rounded-full"></div>

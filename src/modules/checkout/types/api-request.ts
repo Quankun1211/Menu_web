@@ -34,7 +34,7 @@ export type ApplyCouponRequest = {
     }[];
 };
 
-type CheckoutSource = "cart" | "product";
+type CheckoutSource = "cart" | "buy_now" | "menu" | "recipe";
 
 type CheckoutItemRequest = {
   productId: string;
@@ -47,6 +47,5 @@ export type CheckoutRequest = {
   couponCode?: string;
   source: CheckoutSource;
   paymentMethod: string;
-  shippingFee: number,
   platform: "web"
 };

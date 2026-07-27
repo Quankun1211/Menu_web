@@ -1,16 +1,16 @@
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import useGetLatestProduct from '../hooks/useGetLatestProduct';
 
 export default function LatestProduct() {
   const { data: latestProduct, isPending } = useGetLatestProduct();
-  const navigate = useNavigate();
-
   if (isPending) return <div className="h-64 animate-pulse bg-gray-200 rounded-2xl" />;
 
   return (
-    <div 
-      className="relative h-[300px] md:h-[450px] w-full rounded-3xl overflow-hidden cursor-pointer group shadow-lg"
-      onClick={() => navigate(`/explore/special-detail/${latestProduct?.data.slug}`, { state: { productId: latestProduct?.data._id } })}
+    <Link
+      to={`/explore/special-detail/${latestProduct?.data.slug}`}
+      state={{ productId: latestProduct?.data._id }}
+      aria-label={`Xem đặc sản ${latestProduct?.data.name}`}
+      className="relative block h-[300px] md:h-[450px] w-full rounded-3xl overflow-hidden cursor-pointer group shadow-lg"
     >
       <img 
         src={latestProduct?.data.images} 
@@ -23,11 +23,11 @@ export default function LatestProduct() {
         <span className="bg-orange-500 text-xs font-bold uppercase px-3 py-1 rounded-full w-fit mb-3">
           Đặc sản mới nhất
         </span>
-        <h1 className="text-3xl md:text-5xl font-bold mb-2">{latestProduct?.data.name}</h1>
+        <h2 className="text-3xl md:text-5xl font-bold mb-2">{latestProduct?.data.name}</h2>
         <p className="text-gray-200 text-lg">
           Đặc sản miền {latestProduct?.data.region}
         </p>
       </div>
-    </div>
+    </Link>
   );
 }

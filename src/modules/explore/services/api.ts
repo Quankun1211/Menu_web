@@ -114,12 +114,19 @@ export const onTrackView = async (categoryId: string) => {
 export const onGetProductSpecialByRegion = async (
   params?: GetProductSpecialByRegionParams
 ): Promise<BackendResponse<ProductResponse[]>> => {
-  const res = await api.get("/product/get-by-special", {
+  const res = await api.get("/special/get", {
     params: {
       region: params?.region,
       sort: params?.sort,
     },
   });
 
+  return res.data;
+};
+
+export const onGetSpecialDetail = async (
+  id: string
+): Promise<BackendResponse<ProductResponse>> => {
+  const res = await api.get(`/special/${id}`);
   return res.data;
 };

@@ -14,21 +14,24 @@ import {
 } from "@ant-design/icons";
 import { Spin, Button, message, InputNumber, Tag, Divider, Empty } from "antd";
 
-import useGetProductDetail from "../hooks/useGetProductDetail";
+import useGetSpecialDetail from "../hooks/useGetSpecialDetail";
 import useGetMe from "../../../hooks/useGetMe";
 import useAddToCart from "../../cart/hooks/useAddToCart";
 import useTrackView from "../hooks/useTrackView";
 import { formatVND } from "../../../utils/helper";
 import { useCheckoutStore } from "../../../store/useCheckoutStore";
+import PageMeta from "../../../components/common/PageMeta";
 
 export default function ProductSpecialWeb() {
   const location = useLocation();
   const idFromState = location.state?.productId;
+  const { slug } = useParams();
+  const specialIdentifier = idFromState || slug;
 
   const navigate = useNavigate();
   const [quantity, setQuantity] = useState(1);
 
-  const { data: getProductDetail, isPending } = useGetProductDetail(idFromState);
+  const { data: getProductDetail, isPending } = useGetSpecialDetail(specialIdentifier);
   const { data: meData } = useGetMe(false);
   const { mutate: trackView } = useTrackView();
   const { mutate: addToCart, isPending: cartPending } = useAddToCart();
@@ -60,13 +63,13 @@ export default function ProductSpecialWeb() {
       return;
     }
 
-    if (!idFromState) {
+    if (!productData?._id) {
       message.error("Không thể xác định sản phẩm!");
       return;
     }
 
     const items = [{ 
-      productId: idFromState, 
+      productId: productData._id,
       quantity: quantity 
     }];
     setCheckoutData(items, "cart")
@@ -84,13 +87,29 @@ export default function ProductSpecialWeb() {
       message.warning("Mời bạn đăng nhập để chọn mua sản vật!");
       return;
     }
-    addToCart({ productId: idFromState, quantity }, {
+    addToCart({ productId: productData?._id, quantity }, {
       onSuccess: () => message.success("Đã thêm vào giỏ hàng thành công!")
     });
   };
 
   return (
     <div className="max-w-7xl mx-auto space-y-12">
+      <PageMeta
+        title={`${productData?.name || "Đặc sản Việt"} | Bếp Việt`}
+        description={productData?.description || "Nguồn gốc, câu chuyện và giá bán đặc sản Việt tại Bếp Việt."}
+        image={productData?.images}
+        structuredData={{
+          "@context": "https://schema.org", "@type": "Product",
+          name: productData?.name, description: productData?.description,
+          image: productData?.images, sku: productData?._id, category: "Đặc sản Việt Nam",
+          offers: {
+            "@type": "Offer", priceCurrency: "VND",
+            price: productData?.finalPrice || productData?.price,
+            availability: productData?.stock > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
+            url: window.location.href,
+          },
+        }}
+      />
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 bg-white/60 backdrop-blur-md rounded-[40px] p-8 border border-white shadow-xl">
         
         {/* Cột trái: Hình ảnh & Câu chuyện */}
@@ -240,7 +259,7 @@ export default function ProductSpecialWeb() {
               {recipes.length > 0 ? recipes.map((item) => (
                 <div 
                   key={item._id}
-                  onClick={() => navigate(`/recipe/${item._id}`)}
+                  onClick={() => navigate(`/explore/recipe-detail/${item.slug}`, { state: { title: item._id } })}
                   className="flex items-center gap-4 bg-white/10 p-3 rounded-2xl border border-white/5 hover:bg-white/20 cursor-pointer transition-all"
                 >
                   <img src={item.image} className="w-16 h-16 rounded-xl object-cover" alt={item.name} />

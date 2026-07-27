@@ -18,6 +18,7 @@ import useTrackView from "../hooks/useTrackView";
 import useGetMe from "../../../hooks/useGetMe";
 import useAddToCart from "../../cart/hooks/useAddToCart";
 import { calcSale, formatVND } from "../../../utils/helper";
+import PageMeta from "../../../components/common/PageMeta";
 
 export default function ProductDetailScreen() {
   const { slug } = useParams();
@@ -27,7 +28,8 @@ export default function ProductDetailScreen() {
   
   const idFromState = location.state?.productId;
 
-  const { data: getProductDetail, isPending } = useGetProductDetail(idFromState);
+  const productIdentifier = idFromState || slug;
+  const { data: getProductDetail, isPending } = useGetProductDetail(productIdentifier);
   const { data: meData } = useGetMe(false);
   const { mutate: trackView } = useTrackView();
   const { mutate: addToCart, isPending: cartPending } = useAddToCart();
@@ -49,7 +51,7 @@ export default function ProductDetailScreen() {
     }
   }, [isLoggedIn, productData?._id]);
 
-  if (!idFromState && !isPending) {
+  if (!productIdentifier && !isPending) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh]">
         <RestOutlined className="text-6xl text-orange-200 mb-4" />
@@ -74,7 +76,7 @@ export default function ProductDetailScreen() {
       message.warning("Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng!");
       return;
     }
-    addToCart({ productId: idFromState, quantity }, {
+    addToCart({ productId: productData?._id, quantity }, {
       onSuccess: () => message.success("Đã thêm vào giỏ hàng thành công 🛒")
     });
   };
@@ -86,13 +88,13 @@ export default function ProductDetailScreen() {
       return;
     }
 
-    if (!idFromState) {
+    if (!productData?._id) {
       message.error("Không thể xác định sản phẩm!");
       return;
     }
 
     const items = [{ 
-      productId: idFromState, 
+      productId: productData._id, 
       quantity: quantity 
     }];
     setCheckoutData(items, "cart")
@@ -107,6 +109,22 @@ export default function ProductDetailScreen() {
 
   return (
     <div className="min-h-screen bg-linear-to-b from-[#C9936E] via-[#E8C5A8] to-[#f2dbc9] py-8 px-4 rounded-2xl">
+      <PageMeta
+        title={`${productData?.name || "Sản phẩm Việt"} | Bếp Việt`}
+        description={productData?.description || "Thông tin sản phẩm, giá bán và nguồn gốc tại Bếp Việt."}
+        image={productData?.images}
+        structuredData={{
+          "@context": "https://schema.org", "@type": "Product",
+          name: productData?.name, description: productData?.description,
+          image: productData?.images, sku: productData?._id,
+          offers: {
+            "@type": "Offer", priceCurrency: "VND",
+            price: productData?.finalPrice || productData?.price,
+            availability: productData?.stock > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
+            url: window.location.href,
+          },
+        }}
+      />
       <div className="max-w-6xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 p-8 md:p-0 md:pb-12">
             <div className="space-y-6">

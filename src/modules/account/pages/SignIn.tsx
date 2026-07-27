@@ -29,7 +29,7 @@ export default function SignIn() {
 
   return (
     <div className="flex min-h-screen bg-white">
-      <PageMeta title="Đăng nhập - Bếp Việt" description="Chào mừng bạn quay trở lại với Bếp Việt" />
+      <PageMeta title="Đăng nhập - Bếp Việt" description="Đăng nhập tài khoản Bếp Việt" indexable={false} />
       
       <div className="hidden lg:flex lg:w-1/2 relative bg-cover bg-center items-center px-20" 
            style={{ backgroundImage: `url(${banner})` }}>

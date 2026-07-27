@@ -50,6 +50,6 @@ export const onAskChatbot = async (payload: { message: string, history: any[] })
 }
 
 export const onGetSpecialLatestProduct = async() : Promise<BackendResponse<ProductResponse>> => {
-  const data = await api.get("/product/get-latest-specialty")
+  const data = await api.get("/special/latest")
   return data.data
 }

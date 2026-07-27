@@ -57,6 +57,11 @@ export default function Product() {
 
   return (
     <div className="max-w-[1600px] mx-auto px-6 py-10 min-h-screen bg-[#faece1]/30">
+      <header className="mb-10 rounded-[32px] bg-white/70 p-7 shadow-sm ring-1 ring-[#E8C5A8]/40">
+        <p className="text-xs font-black uppercase tracking-[0.2em] text-[#D16D2F]">Chợ thực phẩm Việt</p>
+        <h1 className="mt-2 text-3xl font-black text-[#5C4033] md:text-4xl">Thực phẩm Việt theo vùng miền</h1>
+        <p className="mt-3 max-w-3xl leading-7 text-[#765746]">Chọn rau củ, gạo, gia vị, thịt và thủy hải sản có thông tin nguồn gốc, giá bán và tồn kho minh bạch.</p>
+      </header>
       <div className="flex flex-col lg:flex-row gap-10">
         
         <aside className="w-full lg:w-80 flex-shrink-0">
@@ -132,7 +137,7 @@ export default function Product() {
           </div>
         </aside>
 
-        <main className="flex-1">
+        <div className="flex-1">
           {isPending ? (
             <div className="flex flex-col items-center justify-center py-40 gap-4 bg-white/40 rounded-[40px]">
               <Spin size="large" />
@@ -177,7 +182,7 @@ export default function Product() {
               />
             </div>
           )}
-        </main>
+        </div>
       </div>
     </div>
   );

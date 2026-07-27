@@ -1,16 +1,14 @@
 import { type JSX, useEffect } from "react";
 import type { ComponentType } from "react";
 import { useAppStore } from "../store/app.store";
-import { getToken } from "../utils/token";
 import useGetMe from "../hooks/useGetMe";
 
 function AppHoc<T extends JSX.IntrinsicAttributes> (
     WrappedComponent: ComponentType<T>
 ) {
     const AuthenticatedComponent = (props: T) => {
-        const token = getToken()
         const {setUserData} = useAppStore()
-        const {data: meData} = useGetMe(!!token)
+        const {data: meData} = useGetMe(true)
 
         useEffect(() => {
             if(meData?.data) {

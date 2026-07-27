@@ -2,9 +2,6 @@ import { useNavigate } from "react-router"
 import { useAppStore } from "../../../store/app.store"
 import { useMutation } from "@tanstack/react-query"
 import { onLogInApi } from "../services/api"
-import { jwtDecode } from "jwt-decode"
-import type { JwtPayload } from "../../../libs/shared/types/jwt-payload"
-import { setToken } from "../../../utils/token"
 
 const useLogin = () => {
     const navigate = useNavigate()
@@ -17,10 +14,7 @@ const useLogin = () => {
             console.log(data);
             
             if (data && data.data) {
-                const { access_token } = data.data;
-                const userData = jwtDecode(access_token) as JwtPayload;
-                setToken(access_token);
-                setUserData(userData);
+                setUserData(data.data);
                 navigate("/");
             }
 

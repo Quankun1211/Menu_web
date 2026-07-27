@@ -38,7 +38,7 @@ export type SetDefaultAddressResponse = {
   message: string;
 }
 
-export type CheckoutSource = "cart" | "buy_now";
+export type CheckoutSource = "cart" | "buy_now" | "menu" | "recipe";
 
 export type CheckoutItem = {
   productId: string;
