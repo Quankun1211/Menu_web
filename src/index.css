@@ -64,6 +64,41 @@
   color: #6e747c !important;
 }
 
+/* Input có độ tương phản cố định, không bị browser/dark mode/autofill đổi màu. */
+.high-contrast-input.ant-input-affix-wrapper {
+  background: #ffffff !important;
+  color: #2c1810 !important;
+}
+
+.high-contrast-input.ant-input-affix-wrapper > input.ant-input {
+  background: #ffffff !important;
+  color: #2c1810 !important;
+  caret-color: #d16d2f !important;
+  -webkit-text-fill-color: #2c1810 !important;
+}
+
+.high-contrast-input.ant-input-affix-wrapper > input.ant-input::placeholder,
+.high-contrast-native-input::placeholder {
+  color: #806a5c !important;
+  opacity: 1 !important;
+  -webkit-text-fill-color: #806a5c !important;
+}
+
+.high-contrast-native-input {
+  color: #2c1810 !important;
+  background: #ffffff !important;
+  caret-color: #e25822 !important;
+  -webkit-text-fill-color: #2c1810 !important;
+  color-scheme: light;
+}
+
+.high-contrast-input input:-webkit-autofill,
+.high-contrast-native-input:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0 1000px #ffffff inset !important;
+  -webkit-text-fill-color: #2c1810 !important;
+  caret-color: #d16d2f !important;
+}
+
 /* Change the border color and dot color when the radio is checked */
 .my-custom-radio-group .ant-radio-checked .ant-radio-inner {
   border-color: #4dff82 !important; /* Your desired color */

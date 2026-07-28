@@ -32,7 +32,7 @@ export default function SearchBar() {
       <Input
         prefix={<SearchOutlined className="text-gray-400 mr-2" />}
         placeholder="Tìm kiếm đặc sản Việt..."
-        className="rounded-full bg-gray-100 border-none h-11 hover:bg-gray-200 focus:bg-white focus:shadow-md transition-all px-5 text-base"
+        className="high-contrast-input rounded-full bg-white border border-[#CFA98B] h-11 hover:border-[#D16D2F] focus-within:border-[#D16D2F] focus-within:shadow-md transition-all px-5 text-base"
         value={keyword}
         onChange={(e) => setKeyword(e.target.value)}
         onFocus={() => setIsFocused(true)}
