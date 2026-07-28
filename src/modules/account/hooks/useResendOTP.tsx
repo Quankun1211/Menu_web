@@ -4,7 +4,7 @@ import { onResendOTPApi } from "../services/api"
 const useResendOTP = () => {
     const {data, error, isPending, isError, mutate} = useMutation({
         mutationKey: ["resend-otp"],
-        mutationFn: (payload: { email: string }) => {
+        mutationFn: (payload: { email: string; type?: "verify" | "reset" }) => {
             return onResendOTPApi(payload)
         },
         // onSuccess: (data) => {

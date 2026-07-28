@@ -11,7 +11,7 @@ export default function Verify() {
   const location = useLocation();
   
   const email = location.state?.email || "";
-  const type = location.state?.type || "register"; 
+  const type = location.state?.type === "reset" ? "reset" : "verify";
 
   const [otp, setOtp] = useState("");
   const [timer, setTimer] = useState(30);
@@ -64,7 +64,7 @@ export default function Verify() {
   const handleResend = () => {
     if (!canResend) return;
     
-    resendOTP({ email }, {
+    resendOTP({ email, type }, {
       onSuccess: () => {
         setTimer(60);
         setCanResend(false);
