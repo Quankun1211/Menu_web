@@ -2,6 +2,7 @@ import { useNavigate } from "react-router"
 import { useAppStore } from "../../../store/app.store"
 import { useMutation } from "@tanstack/react-query"
 import { onLogInApi } from "../services/api"
+import { setRefreshToken, setToken } from "../../../utils/token"
 
 const useLogin = () => {
     const navigate = useNavigate()
@@ -14,6 +15,8 @@ const useLogin = () => {
             console.log(data);
             
             if (data && data.data) {
+                setToken(data.data.access_token);
+                setRefreshToken(data.data.refresh_token);
                 setUserData(data.data);
                 navigate("/");
             }

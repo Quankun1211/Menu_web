@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { useNavigate } from "react-router-dom"
 import { useAppStore } from "../store/app.store"
 import { onLogoutApi } from "../services/api"
-import { removeToken } from "../utils/token"
+import { removeRefreshToken, removeToken } from "../utils/token"
 
 const useLogout = () => {
     const queryClient = useQueryClient();
@@ -14,6 +14,7 @@ const useLogout = () => {
         mutationFn: onLogoutApi,
         onSuccess: () => {
             removeToken();
+            removeRefreshToken();
             setUserData(null);
 
             navigate("/", { replace: true });

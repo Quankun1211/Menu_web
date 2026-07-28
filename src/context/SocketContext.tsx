@@ -1,21 +1,32 @@
 import React, { createContext, useContext, useMemo, useEffect } from 'react';
 import { io, Socket } from 'socket.io-client';
 import env from "../config/envConfig";
+import { useAppStore } from "../store/app.store";
+import { getToken } from "../utils/token";
 
 const SocketContext = createContext<Socket | null>(null);
 
 export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
   const socketUrl = env.VITE_SOCKET_URL || window.location.origin;
+  const userData = useAppStore((state) => state.userData);
   
   const socket = useMemo(() => io(socketUrl, {
     withCredentials: true,
+    autoConnect: false,
+    auth: { token: getToken() },
   }), [socketUrl]);
 
   useEffect(() => {
+    if (userData) {
+      socket.auth = { token: getToken() };
+      socket.connect();
+    } else {
+      socket.disconnect();
+    }
     return () => {
       socket.disconnect();
     };
-  }, [socket]);
+  }, [socket, userData]);
 
   return (
     <SocketContext.Provider value={socket}>

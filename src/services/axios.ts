@@ -1,5 +1,6 @@
 import axios from "axios";
 import { ApiUrls } from "../config/url";
+import { getRefreshToken, getToken, removeRefreshToken, removeToken, setRefreshToken, setToken } from "../utils/token";
 
 const api = axios.create({
   baseURL: ApiUrls.apiBaseUrl,
@@ -34,6 +35,8 @@ const loadCsrfToken = async () => {
 };
 
 api.interceptors.request.use(async (config) => {
+  const accessToken = getToken();
+  if (accessToken) config.headers.Authorization = `Bearer ${accessToken}`;
   const method = (config.method || "get").toLowerCase();
   const isSafeMethod = ["get", "head", "options"].includes(method);
   const isPublicAuthMutation = [
@@ -69,14 +72,24 @@ api.interceptors.response.use(
       originalRequest._retry = true;
       try {
         refreshRequest ||= axios
-          .post(`${ApiUrls.apiBaseUrl}/auth/refresh`, {}, { withCredentials: true })
+          .post(
+            `${ApiUrls.apiBaseUrl}/auth/refresh`,
+            { token: getRefreshToken(), clientType: "spa" },
+            { withCredentials: true },
+          )
           .finally(() => {
             refreshRequest = undefined;
           });
         const refreshResponse = await refreshRequest;
+        const nextAccessToken = refreshResponse.data?.data?.access_token;
+        const nextRefreshToken = refreshResponse.data?.data?.refresh_token;
+        if (nextAccessToken) setToken(nextAccessToken);
+        if (nextRefreshToken) setRefreshToken(nextRefreshToken);
         csrfToken = refreshResponse.data?.data?.csrfToken || csrfToken;
         return api(originalRequest);
       } catch (refreshError: any) {
+        removeToken();
+        removeRefreshToken();
         window.location.href = "/account/login";
         return Promise.reject(refreshError.response?.data || refreshError);
       }
