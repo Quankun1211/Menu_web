@@ -111,7 +111,7 @@ export default function ExploreProductItems({ product }) {
           )}
         </div>
 
-        <div className="absolute top-3 right-3 flex flex-col gap-2 translate-x-14 group-hover:translate-x-0 transition-transform duration-500 z-20">
+        <div className="absolute top-3 right-3 flex flex-col gap-2 z-20">
           <Tooltip title="Yêu thích" placement="left">
             <button 
               disabled={pendingFav}

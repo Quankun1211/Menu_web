@@ -19,6 +19,7 @@ import useGetMe from "../../../hooks/useGetMe";
 import useAddToCart from "../../cart/hooks/useAddToCart";
 import { calcSale, formatVND } from "../../../utils/helper";
 import PageMeta from "../../../components/common/PageMeta";
+import FavoriteButton from "../../../components/common/FavoriteButton";
 
 export default function ProductDetailScreen() {
   const { slug } = useParams();
@@ -128,12 +129,18 @@ export default function ProductDetailScreen() {
       <div className="max-w-6xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 p-8 md:p-0 md:pb-12">
             <div className="space-y-6">
-              <div className="rounded-[32px] overflow-hidden shadow-inner bg-white aspect-square group">
+              <div className="relative rounded-[32px] overflow-hidden shadow-inner bg-white aspect-square group">
                 <img 
                   src={productData?.images} 
                   alt={productData?.name} 
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                 />
+                {productData?._id && (
+                  <FavoriteButton
+                    productId={productData._id}
+                    className="absolute right-5 top-5 z-10 h-12 w-12 text-lg"
+                  />
+                )}
               </div>
               
               <div className="flex items-center gap-4 p-5 bg-white/50 rounded-2xl border border-orange-100">

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Typography } from 'antd';
 import { ShoppingCartOutlined, EyeOutlined, FireFilled } from '@ant-design/icons';
 import { calcSalePrice, formatVND } from "../../../utils/helper";
+import FavoriteButton from "../../../components/common/FavoriteButton";
 
 const { Text } = Typography;
 
@@ -36,6 +37,7 @@ export default function ProductCard({ product }) {
           <div className="absolute -right-1 -bottom-1 w-2 h-2 bg-[#F5F5DC] rotate-45 border border-[#D16D2F]"></div>
         </div>
       )}
+      <FavoriteButton productId={product._id} className="absolute right-5 top-5 z-30" />
 
       <div className="relative h-48 w-full overflow-hidden rounded-3xl bg-[#FDFCFB] mb-3">
         <img 

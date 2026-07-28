@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import FavoriteButton from "../../../components/common/FavoriteButton";
 
 const ProductItem = ({ products }) => {
   const navigate = useNavigate();
@@ -8,8 +9,9 @@ const ProductItem = ({ products }) => {
       onClick={() => navigate(`/explore/product-detail/${products.slug}`, { 
         state: { productId: products._id } 
       })}
-      className="bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm hover:shadow-md transition-all cursor-pointer h-full"
+      className="relative bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm hover:shadow-md transition-all cursor-pointer h-full"
     >
+      <FavoriteButton productId={products._id} className="absolute right-3 top-3 z-10" />
       <img 
         src={products.images} 
         alt={products.name}
