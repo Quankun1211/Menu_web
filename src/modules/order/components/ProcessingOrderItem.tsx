@@ -37,7 +37,7 @@ export default function ProcessingOrderItem({ order }: { order: OrderResponse })
           >
             <CustomerServiceOutlined /> Hỗ trợ
           </button>
-          <button className="bg-white px-4 py-1.5 rounded-full text-[11px] font-bold shadow-sm hover:bg-gray-50 transition-colors">
+          <button className="bg-white px-4 py-1.5 rounded-full text-[11px] font-bold shadow-sm text-gray-600 hover:bg-gray-50 transition-colors">
             Chi tiết
           </button>
         </div>
