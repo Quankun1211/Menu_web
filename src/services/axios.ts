@@ -63,8 +63,9 @@ api.interceptors.response.use(
   },
   async (error) => {
     const originalRequest = error.config;
-    const isAuthRoute = ["/auth/login", "/auth/logout", "/auth/register", "/auth/refresh"]
-      .some((path) => originalRequest?.url?.includes(path));
+    const requestUrl = originalRequest?.url || "";
+    const isAuthRoute = ["auth/login", "auth/logout", "auth/register", "auth/refresh"]
+      .some((path) => requestUrl.includes(path));
 
     const isOptionalMeRequest = originalRequest?.url?.includes("/user/me");
 

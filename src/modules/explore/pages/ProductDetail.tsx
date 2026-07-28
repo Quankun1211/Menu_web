@@ -156,7 +156,7 @@ export default function ProductDetailScreen() {
                 {hasSale ? (
                   <>
                     <div className="flex items-center gap-2">
-                      <span className="text-gray-400 line-through text-lg font-medium opacity-80">
+                      <span className="text-gray-800 line-through text-lg font-medium opacity-80">
                         {formatVND(productData?.price)}
                       </span>
                       <Tag color="#F26522" className="border-none font-black px-2 py-0 rounded-md text-[10px] uppercase">
