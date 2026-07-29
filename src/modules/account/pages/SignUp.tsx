@@ -1,7 +1,7 @@
 import banner from "../../../assets/images/banner.png";
 import PageMeta from "../../../components/common/PageMeta";
 import { FormProps, Divider, Button, Modal, Result } from 'antd';
-import { GoogleOutlined, FacebookFilled, AppleFilled, MailOutlined } from '@ant-design/icons';
+import { MailOutlined } from '@ant-design/icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUtensils } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from "react-router";
@@ -9,6 +9,7 @@ import { useState } from "react";
 import useRegister from "../hooks/useRegister";
 import SignUpForm from "../components/RegisterForm";
 import type { RegisterRequest } from "../types/api-request";
+import SocialLoginButtons from "../components/SocialLoginButtons";
 
 export default function SignUp() {
   const navigate = useNavigate();
@@ -41,10 +42,8 @@ export default function SignUp() {
 
         <Divider plain className="text-gray-400 text-sm my-6">Hoặc đăng ký với</Divider>
 
-        <div className="flex justify-around gap-4 mb-8">
-          <Button icon={<GoogleOutlined />} className="h-12 flex items-center justify-center rounded-xl flex-1 max-w-25" />
-          <Button icon={<FacebookFilled className="text-blue-600!" />} className="h-12 flex items-center justify-center rounded-xl flex-1 max-w-25" />
-          <Button icon={<AppleFilled />} className="h-12 flex items-center justify-center rounded-xl flex-1 max-w-25" />
+        <div className="mb-8">
+          <SocialLoginButtons />
         </div>
 
         <p className="text-center text-gray-600">

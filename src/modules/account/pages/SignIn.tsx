@@ -4,11 +4,11 @@ import type { FormProps } from "antd";
 import type { logInRequest } from "../types/api-request";
 import useLogin from "../hooks/useLogin";
 import LoginForm from "../components/LoginForm";
-import { Divider, Button } from 'antd';
-import { GoogleOutlined, FacebookFilled, AppleFilled } from '@ant-design/icons';
+import { Divider } from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUtensils } from '@fortawesome/free-solid-svg-icons';
 import { NavLink } from "react-router";
+import SocialLoginButtons from "../components/SocialLoginButtons";
 
 export default function SignIn() {
   const { mutate: onLogin } = useLogin();
@@ -78,10 +78,8 @@ export default function SignIn() {
 
         <Divider plain className="text-gray-400 text-sm my-8 font-normal">Hoặc tiếp tục với</Divider>
 
-        <div className="flex justify-center gap-4 mb-10">
-          <Button icon={<GoogleOutlined />} className="h-12 flex items-center justify-center rounded-xl flex-1 max-w-[100px]" />
-          <Button icon={<FacebookFilled className="text-blue-600!" />} className="h-12 flex items-center justify-center rounded-xl flex-1 max-w-[100px]" />
-          <Button icon={<AppleFilled />} className="h-12 flex items-center justify-center rounded-xl flex-1 max-w-[100px]" />
+        <div className="mb-10">
+          <SocialLoginButtons />
         </div>
 
         <p className="text-center text-gray-600">

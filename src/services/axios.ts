@@ -42,6 +42,8 @@ api.interceptors.request.use(async (config) => {
   const isPublicAuthMutation = [
     "/auth/login",
     "/auth/register",
+    "/auth/google",
+    "/auth/facebook",
     "/auth/verify-otp",
     "/auth/resend-otp",
     "/auth/forgot-password",

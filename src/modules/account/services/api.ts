@@ -1,6 +1,6 @@
 import type { BackendResponse } from "../../../libs/shared/types/backend-response";
 import api from "../../../services/axios";
-import type { LoginResponse, RegisterResponse } from "../types/api-response";
+import type { LoginResponse, RegisterResponse, SocialProvider } from "../types/api-response";
 import type { logInRequest, RegisterRequest } from "../types/api-request";
 export const onLogInApi = async(
     payload: logInRequest
@@ -67,4 +67,14 @@ export const onRegisterApi = async(
         confirmPassword
     })
     return data.data
+}
+export const onSocialLoginApi = async (
+    provider: SocialProvider,
+    token: string
+): Promise<BackendResponse<LoginResponse>> => {
+    const { data } = await api.post(`/auth/${provider}`, {
+        token,
+        clientType: "spa"
+    });
+    return data;
 }

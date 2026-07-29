@@ -1,7 +1,9 @@
 export type BackendResponse<T> = {
-    code: T;
+    code: number;
+    message?: string;
+    success?: boolean;
     data: T;
-    unreadCount: number
+    unreadCount?: number
 }
 export type Pagination = {
     meta: {

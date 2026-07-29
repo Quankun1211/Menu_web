@@ -84,6 +84,26 @@ export default function ProfileScreen() {
           {isLoggedIn ? (
             <>
               <h1 className="text-xl font-bold text-gray-800">{meData?.data.name}</h1>
+              <p className="mt-1 text-sm text-gray-500">
+                {meData?.data.email || "Facebook chưa cung cấp email"}
+              </p>
+              <div className="mt-2 flex flex-wrap justify-center gap-2">
+                {(meData?.data.authProviders?.length
+                  ? meData.data.authProviders
+                  : ["local"]
+                ).map((provider) => (
+                  <span
+                    key={provider}
+                    className="rounded-full border border-orange-100 bg-orange-50 px-3 py-1 text-[10px] font-bold uppercase tracking-wide text-orange-700"
+                  >
+                    {provider === "google"
+                      ? "Google"
+                      : provider === "facebook"
+                        ? "Facebook"
+                        : "Email"}
+                  </span>
+                ))}
+              </div>
               <div className="flex items-center gap-1.5 bg-orange-500 px-3 py-1 rounded-full mt-2 shadow-sm">
                 <ShieldCheck size={14} className="text-white" />
                 <span className="text-white text-xs font-bold font-mono">Cấp độ {wallet?.level || 1}</span>
