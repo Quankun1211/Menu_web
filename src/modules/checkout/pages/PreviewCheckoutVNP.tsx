@@ -26,7 +26,7 @@ export default function PaymentCheck() {
     const verifyPayment = async () => {
       try {
         const params = Object.fromEntries(searchParams.entries());
-        const response = await api.get('/order/vnpay-confirm', { params });
+        const response = await api.get('/orders/payments/vnpay/confirmation', { params });
         if (!active) return;
         setStatus(response.data?.data?.paymentStatus === 'paid' ? 'success' : 'error');
       } catch (error: any) {
@@ -41,7 +41,7 @@ export default function PaymentCheck() {
           localStorage.getItem("pending_vnpay_order_id");
         if (searchParams.get('vnp_ResponseCode') === '00' && actualOrderId) {
           try {
-            const reconciliation = await api.post(`/order/vnpay-reconcile/${actualOrderId}`);
+            const reconciliation = await api.post(`/orders/${actualOrderId}/payments/vnpay/reconciliation`);
             if (!active) return;
             setStatus(
               reconciliation.data?.data?.paymentStatus === 'paid' ? 'success' : 'error',

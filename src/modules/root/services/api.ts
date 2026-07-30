@@ -6,7 +6,7 @@ import type { PaginationResponse } from "../../../types/api-response";
 export const onGetCategoriesApi = async (
   limit?: number
 ): Promise<BackendResponse<CategoryResponse[]>> => {
-  const res = await api.get("/category/get", {
+  const res = await api.get("/categories", {
     params: limit ? { limit } : {}
   });
   return res.data;
@@ -15,7 +15,7 @@ export const onGetCategoriesApi = async (
 export const ongetPopularProducts = async (
   limit?: number
 ): Promise<BackendResponse<ProductResponse[]>> => {
-  const res = await api.get("/product/get-popular", {
+  const res = await api.get("/products/popular", {
     params: limit ? { limit } : {}
   });
   return res.data;
@@ -25,7 +25,7 @@ export const onGetShockDealProducts = async (
   page: number = 1, 
   limit: number = 12
 ): Promise<PaginatedBackendResponse<ShockDealProducts[]>> => {
-  const response = await api.get("/product/get-shock-deals", {
+  const response = await api.get("/products/deals", {
     params: { page, limit }
   });
 
@@ -33,23 +33,23 @@ export const onGetShockDealProducts = async (
 };
 
 export const onGetSuggestionProducts = async (page: number = 1, limit: number = 12): Promise<PaginatedBackendResponse<ProductResponse[]>> => {
-  const response = await api.get("/product/get-suggestion", {
+  const response = await api.get("/products/suggestions", {
     params: { page, limit }
   });
   return response.data;
 }
 
 export const onGetRecipeLastest = async() : Promise<BackendResponse<RecipeDetailResponse>> => {
-  const data = await api.get("/menu/recipe/get-lastest")
+  const data = await api.get("/recipes/latest")
   return data.data
 }
 
 export const onAskChatbot = async (payload: { message: string, history: any[] }) => {
-    const res = await api.post("/ai/ask", payload);
+    const res = await api.post("/chatbot/messages", payload);
     return res.data;
 }
 
 export const onGetSpecialLatestProduct = async() : Promise<BackendResponse<ProductResponse>> => {
-  const data = await api.get("/special/latest")
+  const data = await api.get("/specials/latest")
   return data.data
 }

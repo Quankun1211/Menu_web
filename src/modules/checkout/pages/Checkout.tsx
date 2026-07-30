@@ -69,7 +69,7 @@ const finalTotal = Math.max(subTotal + shippingFee - Math.abs(discountValue), 0)
     const pendingOrderId = localStorage.getItem("pending_vnpay_order_id");
     if (!pendingOrderId) return;
 
-    api.post(`/order/vnpay-reconcile/${pendingOrderId}`)
+    api.post(`/orders/${pendingOrderId}/payments/vnpay/reconciliation`)
       .then((response) => {
         localStorage.removeItem("pending_vnpay_order_id");
         queryClient.invalidateQueries({ queryKey: ["get-my-orders"] });

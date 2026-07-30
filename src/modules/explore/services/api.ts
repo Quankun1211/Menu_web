@@ -17,7 +17,7 @@ type GetProductSpecialByRegionParams = {
 export const onGetProductByCategory = async (
   params?: GetProductByCategoryParams
 ): Promise<BackendResponse<ProductResponse[]>> => {
-  const { data } = await api.get("/product/get-by-category", {
+  const { data } = await api.get("/products/by-category", {
     params: {
       categoryId: params?.categoryId,
       sort: params?.sort,
@@ -29,20 +29,20 @@ export const onGetProductByCategory = async (
 
 export const onGetCategoryMenuApi = async (
 ): Promise<BackendResponse<CategoryMenuResponse[]>> => {
-  const res = await api.get("/menu/category/get")
+  const res = await api.get("/menu-categories")
   return res.data;
 };
 
 export const onGetCategoryRecipeApi = async (
 ): Promise<BackendResponse<CategoryRecipeResponse[]>> => {
-  const res = await api.get("/menu/recipe/category/get")
+  const res = await api.get("/recipes/categories")
   return res.data;
 };
 
 export const onGetProductByRegion = async (
   params?: GetProductByRegionParams
 ): Promise<PaginatedBackendResponse<ProductResponse[]>> => {
-  const res = await api.get("/product/get-by-region", {
+  const res = await api.get("/products/by-region", {
     params: {
       region: params?.region,
       categoryId: params?.categoryId,
@@ -60,7 +60,7 @@ export const onGetMenuApi = async (
   page = 1,
   limit = 12,
 ): Promise<PaginatedBackendResponse<MenuResponse[]>> => {
-  const res = await api.get("/menu/my-menu/get", {
+  const res = await api.get("/menus", {
     params: { categoryId, page, limit },
   });
   return res.data;
@@ -71,7 +71,7 @@ export const onGetRecipeApi = async (
   page = 1,
   limit = 12,
 ): Promise<PaginatedBackendResponse<RecipeDetailResponse[]>> => {
-  const res = await api.get("/menu/recipe/get-by-category", {
+  const res = await api.get("/recipes/by-category", {
     params: { categoryId, page, limit },
   });
   return res.data;
@@ -80,32 +80,32 @@ export const onGetRecipeApi = async (
 export const onGetMenuDetailApi = async (
   id: string
 ): Promise<BackendResponse<MenuResponse>> => {
-  const res = await api.get(`/menu/my-menu/get-detail/${id}`);
+  const res = await api.get(`/menus/${id}`);
   return res.data;
 };
 
 export const onGetRecipeDetailApi = async (
   id: string
 ): Promise<BackendResponse<RecipeDetailResponse>> => {
-  const res = await api.get(`/menu/recipe/get-detail/${id}`);
+  const res = await api.get(`/recipes/${id}`);
   return res.data;
 };
 
 export const onSaveRecipeApi = async (
   recipeId: string
 ): Promise<BackendResponse<RecipeResponse>> => {
-  const res = await api.post(`/menu/recipe/save/${recipeId}`);
+  const res = await api.post(`/recipes/${recipeId}/saved-state`);
   return res.data;
 };
 
 export const onGetProductDetail = async (id: string)
 : Promise<BackendResponse<ProductResponse>> => {
-  const data = await api.get(`/product/get-product-detail/${id}`);
+  const data = await api.get(`/products/${id}`);
   return data.data;
 };
 
 export const onTrackView = async (categoryId: string) => {
-  const data = await api.post("/user/track-view", {
+  const data = await api.post("/users/view-history", {
     categoryId
   })
   return data.data
@@ -114,7 +114,7 @@ export const onTrackView = async (categoryId: string) => {
 export const onGetProductSpecialByRegion = async (
   params?: GetProductSpecialByRegionParams
 ): Promise<PaginatedBackendResponse<ProductResponse[]>> => {
-  const res = await api.get("/special/get", {
+  const res = await api.get("/specials", {
     params: {
       region: params?.region,
       sort: params?.sort,
@@ -129,6 +129,6 @@ export const onGetProductSpecialByRegion = async (
 export const onGetSpecialDetail = async (
   id: string
 ): Promise<BackendResponse<ProductResponse>> => {
-  const res = await api.get(`/special/${id}`);
+  const res = await api.get(`/specials/${id}`);
   return res.data;
 };

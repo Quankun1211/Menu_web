@@ -9,8 +9,8 @@ export const ApiUrls = {
         refreshToken: "/auth/refresh"
     },
     user: {
-        queryProfile: "/user/:$1",
-        updateProfile: "/user/update-profile"
+        queryProfile: "/users/:$1",
+        updateProfile: "/users/me"
     },
     tags: {
         getTags: "/tag"

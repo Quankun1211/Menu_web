@@ -5,20 +5,20 @@ import { CancelOrderRequest } from "../types/api-request";
 export const onGetMyOrders = async (page = 1, limit = 10, status = "all"): Promise<
   PaginatedBackendResponse<OrderResponse[]>
 > => {
-  const res = await api.get("/order/get", { params: { page, limit, status } });
+  const res = await api.get("/orders", { params: { page, limit, status } });
   return res.data;
 };
 
 export const onGetOrderDetail = async (orderId?: string) 
 : Promise<BackendResponse<OrderDetailResponse>> => {
-  const data = await api.get(`/order/get-detail/${orderId}`)
+  const data = await api.get(`/orders/${orderId}`)
   return data.data
 }
 
 export const onCancelOrder = async(
   payload: CancelOrderRequest
 ) : Promise<BackendResponse<OrderResponse>> => {
-  const data = await api.post(`/order/cancel/${payload.orderId}`, {
+  const data = await api.patch(`/orders/${payload.orderId}/cancellation`, {
     reason: payload.reason
   })
   return data.data

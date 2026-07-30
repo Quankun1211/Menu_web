@@ -6,22 +6,22 @@ import api from "../../../services/axios";
 export const onAddAddressApi = async (
     payload: AddAddressRequest
 ) : Promise<BackendResponse<AddAddressResponse>> => {
-    const { data } = await api.post("/address/add", payload);
+    const { data } = await api.post("/addresses", payload);
     return data
 }
 export const onGetAddressApi = async(): Promise<BackendResponse<GetAddressesResponse>> => {
-    const {data} = await api.get("/address/get")
+    const {data} = await api.get("/addresses")
     return data
 }
 export const onGetCoupon = async (
 ): Promise<BackendResponse<MyCouponResponse>> => {
-  const res = await api.get("/order/my-coupon");
+  const res = await api.get("/users/me/coupons");
   return res.data;
 };
 export const onGetAddressDetail = async (
   addressId?: string
 ): Promise<BackendResponse<AddressModel>> => {
-  const { data } = await api.get(`/address/get-detail/${addressId}`);
+  const { data } = await api.get(`/addresses/${addressId}`);
   return data;
 };
 
@@ -31,7 +31,7 @@ export const onUpdateAddressApi = async (
   const { addressId, ...body } = params;
 
   const { data } = await api.put(
-    `/address/update/${addressId}`,
+    `/addresses/${addressId}`,
     body
   );
 
@@ -40,20 +40,20 @@ export const onUpdateAddressApi = async (
 export const previewCheckoutApi = async (
   body: PreviewCheckoutRequest
 ): Promise<BackendResponse<PreviewCheckoutResponse>> => {
-  const { data } = await api.post("/product/checkout/preview", body)
+  const { data } = await api.post("/checkout-previews", body)
   return data
 }
 
 export const applyCouponApi = async (
   payload: ApplyCouponRequest
 ): Promise<BackendResponse<ApplyCouponResponse>> => {
-  const { data } = await api.post("/coupon/apply", payload);
+  const { data } = await api.post("/coupons/validation", payload);
   return data;
 };
 
 export const onCheckoutApi = async(
   payload: CheckoutRequest
 ): Promise<BackendResponse<OrderResponse>> => {
-  const { data } = await api.post("/order/create", payload)
+  const { data } = await api.post("/orders", payload)
   return data
 }

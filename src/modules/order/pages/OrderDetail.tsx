@@ -80,7 +80,7 @@ export default function OrderDetailWeb() {
     if (!order) return;
     try {
       setResumePending(true);
-      const response = await api.post(`/order/vnpay-resume/${order._id}`, {
+      const response = await api.post(`/orders/${order._id}/payments/vnpay/resumption`, {
         platform: "web",
       });
       if (response.data?.data?.paymentStatus === "paid") {

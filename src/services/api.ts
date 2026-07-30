@@ -4,7 +4,7 @@ import api from "./axios";
 import { getRefreshToken } from "../utils/token";
 
 export const onGetMeApi = async (): Promise<BackendResponse<UserRecord>> => {
-    const data = await api.get("/user/me")
+    const data = await api.get("/users/me")
     return data.data
 }
 
@@ -15,25 +15,25 @@ export const onLogoutApi = async (): Promise<BackendResponse<{message: string}>>
 export const onSearchProducts = async (
   keyword: string, sort?: string
 ): Promise<BackendResponse<SearchProductResponse[]>> => {
-  const { data } = await api.get('/product/search', {
+  const { data } = await api.get('/products/search', {
     params: { q: keyword, sort: sort },
   });
   return data;
 };
 export const onGetNotification = async () : Promise<BackendResponse<NotificationResponse[]>> => {
-    const data = await api.get("/notification/get")
+    const data = await api.get("/notifications")
     return data.data
 }
 
 export const onReadNotification = async (id: string): Promise<BackendResponse<NotificationResponse>> => {
-  const data = await api.patch(`/notification/read/${id}`);
+  const data = await api.patch(`/notifications/${id}/read-status`);
   return data.data;
 };
 export const onReadAllNotification = async (): Promise<BackendResponse<NotificationResponse>> => {
-  const data = await api.patch(`/notification/read-all`);
+  const data = await api.patch(`/notifications/read-status`);
   return data.data;
 };
 export const onAskChatbot = async (payload: { message: string, history: any[] }) => {
-    const res = await api.post("/ai/ask", payload);
+    const res = await api.post("/chatbot/messages", payload);
     return res.data;
 }
