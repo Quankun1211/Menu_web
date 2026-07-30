@@ -5,7 +5,9 @@ import { BellOutlined, ShoppingOutlined, UserOutlined, NotificationOutlined, Eye
 import { Avatar, Badge, Dropdown, Modal, type MenuProps, Button, Empty, Tag } from "antd";
 import SearchBar from "../common/SearchBar";
 import { formatVND, formatDate } from "../../utils/helper";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
+import { useSocket } from "../../context/SocketContext";
 import useGetMe from "../../hooks/useGetMe";
 import useGetCart from "../../modules/cart/hooks/useGetCart";
 import useGetNotification from "../../hooks/useGetNotification";
@@ -25,6 +27,19 @@ export default function Header() {
   const { mutate: onReadNoti } = useReadNotification()
   const { mutate: onReadAllNoti } = useReadAllNotification()
   const navigate = useNavigate();
+  const socket = useSocket();
+  const queryClient = useQueryClient();
+
+  useEffect(() => {
+    if (!isLoggedIn) return;
+    const handleNewNotification = () => {
+      queryClient.invalidateQueries({ queryKey: ["get-notification"] });
+    };
+    socket.on("new_notification", handleNewNotification);
+    return () => {
+      socket.off("new_notification", handleNewNotification);
+    };
+  }, [isLoggedIn, queryClient, socket]);
 
   const [selectedNoti, setSelectedNoti] = useState<any>(null);
   const [isNotiModalOpen, setIsNotiModalOpen] = useState(false);

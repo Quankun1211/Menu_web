@@ -46,7 +46,7 @@ export default function ShippingOrderItem({ order }: { order: OrderResponse }) {
         <div className="flex justify-between items-center pt-2">
           <span className="text-xl font-black text-orange-600">{formatVND(order.totalPrice)}</span>
           <button 
-            onClick={() => navigate(`/order/${order._id}`)}
+            onClick={() => navigate("/order/detail", { state: { orderId: order._id } })}
             className="flex items-center gap-2 bg-orange-600 text-white px-5 py-2 rounded-2xl font-bold text-sm hover:bg-orange-700 transition-colors"
           >
             Theo dõi <ArrowRightOutlined />

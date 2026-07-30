@@ -15,7 +15,8 @@ export type OrderResponse = {
     | "shipping"
     | "assigned"
     | "completed"
-    | "pending_cancel";
+    | "pending_cancel"
+    | "payment_failed";
   createdAt: string;
   cancelReason: string; 
   cancelledAt: string;
@@ -26,6 +27,7 @@ export type OrderResponse = {
   updatedAt: string;
   paymentUrl?: string;
   paymentStatus: string;
+  paymentMethod: string;
   shipperId?: string;
   shippedAt: string,
   deliveredAt: string,
@@ -64,6 +66,7 @@ export type OrderDetailResponse = {
   paymentStatus: string;
   paidAt: Date;
   paymentMethod: string;
+  paymentExpiresAt?: string;
   lastKnownLocation: {
     latitude: number,
     longitude: number

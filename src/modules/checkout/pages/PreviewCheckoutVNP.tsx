@@ -8,6 +8,7 @@ import {
   ShoppingOutlined,
   HistoryOutlined 
 } from '@ant-design/icons';
+import api from '../../../services/axios';
 
 const { Text } = Typography;
 
@@ -17,24 +18,53 @@ export default function PaymentCheck() {
   const [loading, setLoading] = useState(true);
   const [status, setStatus] = useState<'success' | 'error' | 'cancel' | 'loading'>('loading');
 
-  const responseCode = searchParams.get('vnp_ResponseCode');
   const orderId = searchParams.get('vnp_TxnRef');
-  const amount = searchParams.get('vnp_Amount'); 
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      if (responseCode === '00') {
-        setStatus('success');
-      } else if (responseCode === '24') {
-        setStatus('cancel');
-      } else {
-        setStatus('error');
-      }
-      setLoading(false);
-    }, 1500);
+    let active = true;
 
-    return () => clearTimeout(timer);
-  }, [responseCode]);
+    const verifyPayment = async () => {
+      try {
+        const params = Object.fromEntries(searchParams.entries());
+        const response = await api.get('/order/vnpay-confirm', { params });
+        if (!active) return;
+        setStatus(response.data?.data?.paymentStatus === 'paid' ? 'success' : 'error');
+      } catch (error: any) {
+        if (!active) return;
+        if (searchParams.get('vnp_ResponseCode') === '24') {
+          setStatus('cancel');
+          return;
+        }
+        const actualOrderId =
+          error?.data?.orderId ||
+          error?.response?.data?.data?.orderId ||
+          localStorage.getItem("pending_vnpay_order_id");
+        if (searchParams.get('vnp_ResponseCode') === '00' && actualOrderId) {
+          try {
+            const reconciliation = await api.post(`/order/vnpay-reconcile/${actualOrderId}`);
+            if (!active) return;
+            setStatus(
+              reconciliation.data?.data?.paymentStatus === 'paid' ? 'success' : 'error',
+            );
+            return;
+          } catch {
+            // The error state below is intentional: never trust the browser callback alone.
+          }
+        }
+        setStatus('error');
+      } finally {
+        if (active) {
+          localStorage.removeItem("pending_vnpay_order_id");
+          setLoading(false);
+        }
+      }
+    };
+
+    verifyPayment();
+    return () => {
+      active = false;
+    };
+  }, [orderId, searchParams]);
 
   if (loading) {
     return (
@@ -59,7 +89,7 @@ export default function PaymentCheck() {
                 <p className="text-[#8B5E3C]">Cảm ơn bạn đã tin chọn sản vật vùng miền.</p>
                 <div className="bg-[#faece1] p-3 rounded-xl inline-block border border-[#E8C5A8]/30">
                   <Text strong>Mã đơn hàng: </Text>
-                  <Text className="text-[#D16D2F] font-bold">#VN-{orderId.slice(-5).toUpperCase()}</Text>
+                  <Text className="text-[#D16D2F] font-bold">#VN-{orderId?.slice(-5).toUpperCase()}</Text>
                 </div>
               </div>
             }

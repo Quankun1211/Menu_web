@@ -48,4 +48,5 @@ export type CheckoutRequest = {
   source: CheckoutSource;
   paymentMethod: string;
   platform: "web"
+  checkoutSessionId: string;
 };

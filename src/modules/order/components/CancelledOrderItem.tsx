@@ -2,8 +2,23 @@ import React from 'react';
 import { RotateCcw } from 'lucide-react';
 import { OrderResponse } from '../types/api-response';
 import { formatDate, formatVND } from '../../../utils/helper';
+import { useNavigate } from 'react-router-dom';
+import { useCheckoutStore } from '../../../store/useCheckoutStore';
 
 const CancelledOrderItem = ({ order }: { order: OrderResponse }) => {
+  const navigate = useNavigate();
+  const setCheckoutData = useCheckoutStore((state) => state.setCheckoutData);
+
+  const handleReorder = () => {
+    const items = order.itemsForRebuy.map(({ productId, quantity }) => ({
+      productId,
+      quantity,
+    }));
+    if (!items.length) return;
+    setCheckoutData(items, "buy_now");
+    navigate("/checkout");
+  };
+
   return (
     <div className="bg-white rounded-3xl overflow-hidden shadow-lg mb-6 border border-gray-100 transition hover:shadow-xl">
       <div className="relative h-40 w-full">
@@ -27,8 +42,18 @@ const CancelledOrderItem = ({ order }: { order: OrderResponse }) => {
           Lý do: {order.cancelledBy === "user" ? order.cancelReason : order.cancelRequest?.reason}
         </p>
 
-        <div className="flex justify-end mt-4">
-          <button className="flex items-center gap-2 bg-[#D3764C] text-white px-6 py-2 rounded-full font-bold text-sm hover:bg-[#b85e3a] transition shadow-md">
+        <div className="flex justify-end gap-2 mt-4">
+          <button
+            onClick={() => navigate("/order/detail", { state: { orderId: order._id } })}
+            className="px-5 py-2 rounded-full font-bold text-sm border border-gray-300 text-gray-600"
+          >
+            Chi tiết
+          </button>
+          <button
+            onClick={handleReorder}
+            disabled={!order.itemsForRebuy.length}
+            className="flex items-center gap-2 bg-[#D3764C] disabled:bg-gray-300 disabled:cursor-not-allowed text-white px-6 py-2 rounded-full font-bold text-sm hover:bg-[#b85e3a] transition shadow-md"
+          >
             <RotateCcw size={16} /> Đặt lại
           </button>
         </div>

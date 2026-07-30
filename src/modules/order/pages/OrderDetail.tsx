@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { 
   ArrowLeftOutlined, 
@@ -10,7 +10,8 @@ import {
   ExclamationCircleOutlined,
   UndoOutlined,
   CustomerServiceOutlined,
-  PhoneOutlined
+  PhoneOutlined,
+  CreditCardOutlined
 } from '@ant-design/icons';
 import { Button, Spin, Modal, Input, message } from 'antd';
 import DeliveryStatusHorizontal from '../components/DeliveryStatusHorizontal';
@@ -18,6 +19,7 @@ import OrderItemDetail from '../components/OrderDetailItem';
 import useGetOrderDetail from '../hooks/useGetOrderDetail';
 import useCancelOrder from '../hooks/useCancelOrder';
 import { formatVND } from '../../../utils/helper';
+import api from '../../../services/axios';
 
 export default function OrderDetailWeb() {
   const location = useLocation();
@@ -28,11 +30,26 @@ export default function OrderDetailWeb() {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [cancelReason, setCancelReason] = useState('');
+  const [resumePending, setResumePending] = useState(false);
+  const [paymentRemaining, setPaymentRemaining] = useState(0);
 
   const order = data?.data;
   const status = order?.status ?? "pending";
 
+  useEffect(() => {
+    const updateRemaining = () => {
+      const expiresAt = order?.paymentExpiresAt
+        ? new Date(order.paymentExpiresAt).getTime()
+        : 0;
+      setPaymentRemaining(Math.max(0, Math.ceil((expiresAt - Date.now()) / 1000)));
+    };
+    updateRemaining();
+    const timer = window.setInterval(updateRemaining, 1000);
+    return () => window.clearInterval(timer);
+  }, [order?.paymentExpiresAt]);
+
   const getBannerInfo = (status: string, paymentStatus?: string) => {
+    if (status === "payment_failed") return { title: "Thanh toán không thành công", sub: "Đơn hàng không bị tính là đã hủy", icon: <CloseCircleFilled />, color: "text-amber-600", bg: "bg-amber-50" };
     if (paymentStatus === "refunded") return { title: "Đã hoàn tiền", sub: "Tiền đã được hoàn lại thành công", icon: <UndoOutlined />, color: "text-green-600", bg: "bg-green-50" };
     switch (status) {
       case "delivered": return { title: "Giao hàng thành công", sub: "Đơn hàng đã được giao", icon: <CheckCircleFilled />, color: "text-orange-600", bg: "bg-orange-50" };
@@ -43,16 +60,49 @@ export default function OrderDetailWeb() {
   };
 
   const handleCancel = () => {
-    if (!cancelReason.trim()) return message.warning("Vui lòng nhập lý do hủy");
-    cancelOrder({ orderId: idFromState, reason: cancelReason }, {
+    const normalizedReason = cancelReason.trim();
+    if (normalizedReason.length < 5) {
+      return message.warning("Lý do hủy phải có ít nhất 5 ký tự");
+    }
+    cancelOrder({ orderId: idFromState, reason: normalizedReason }, {
       onSuccess: () => {
         message.success("Đã gửi yêu cầu hủy đơn");
         setIsModalOpen(false);
-      }
+      },
+      onError: (error: any) => {
+        message.error(error?.message || "Không thể hủy đơn hàng");
+      },
     });
   };
 
   if (isPending) return <div className="h-screen flex items-center justify-center"><Spin size="large" tip="Đang tải..." /></div>;
+  const handleResumePayment = async () => {
+    if (!order) return;
+    try {
+      setResumePending(true);
+      const response = await api.post(`/order/vnpay-resume/${order._id}`, {
+        platform: "web",
+      });
+      if (response.data?.data?.paymentStatus === "paid") {
+        message.success("Giao dịch đã được thanh toán thành công");
+        window.location.reload();
+        return;
+      }
+      const paymentUrl = response.data?.data?.paymentUrl;
+      if (!paymentUrl) throw new Error("Không nhận được đường dẫn thanh toán");
+      localStorage.setItem("pending_vnpay_order_id", order._id);
+      window.location.href = paymentUrl;
+    } catch (error: any) {
+      message.error(
+        error?.response?.data?.message ||
+          error?.message ||
+          "Không thể tiếp tục thanh toán",
+      );
+    } finally {
+      setResumePending(false);
+    }
+  };
+
   if (!order) return null;
 
   const banner = getBannerInfo(status, order.paymentStatus);
@@ -130,12 +180,42 @@ export default function OrderDetailWeb() {
               </div>
               <div className="flex-1">
                 <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Trạng thái thanh toán</p>
-                <p className="text-xs font-black text-gray-700 uppercase">{order.paymentMethod} • {order.paymentStatus === 'paid' ? 'Đã thanh toán' : 'Chưa thanh toán'}</p>
+                <p className="text-xs font-black text-gray-700 uppercase">
+                  {order.paymentMethod} • {
+                    order.paymentStatus === "paid"
+                      ? "Đã thanh toán"
+                      : order.paymentStatus === "refunded"
+                        ? "Đã hoàn tiền"
+                        : order.paymentStatus === "cancelled"
+                          ? "Đã hủy thanh toán"
+                          : order.paymentStatus === "failed"
+                            ? "Thanh toán thất bại"
+                            : "Chưa thanh toán"
+                  }
+                </p>
+                {["pending", "checking"].includes(order.paymentStatus) && paymentRemaining > 0 && (
+                  <p className="text-[11px] text-orange-600 font-semibold mt-1">
+                    Giữ hàng còn {Math.floor(paymentRemaining / 60)}:{String(paymentRemaining % 60).padStart(2, "0")}
+                  </p>
+                )}
               </div>
             </div>
 
             <div className="mt-4 grid grid-cols-2 gap-3">
               <Button icon={<CustomerServiceOutlined />} className="rounded-xl font-bold border-gray-200 text-gray-500 h-12">Hỗ trợ</Button>
+              {order.paymentMethod === "vnpay" &&
+                ["pending", "checking", "failed", "cancelled"].includes(order.paymentStatus) &&
+                status !== "cancelled" && (
+                  <Button
+                    type="primary"
+                    icon={<CreditCardOutlined />}
+                    className="h-12 rounded-xl font-bold bg-orange-500 border-none"
+                    onClick={handleResumePayment}
+                    loading={resumePending}
+                  >
+                    Tiếp tục thanh toán
+                  </Button>
+                )}
               {["pending", "confirmed", "processing"].includes(status) && (
                 <Button 
                   danger 

@@ -6,4 +6,5 @@ export type JwtPayload = {
     avatar: string;
     name: string;
     email:string;
+    exp?: number;
 }

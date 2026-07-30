@@ -9,6 +9,8 @@ const useCheckout = () => {
         mutationFn: (payload: CheckoutRequest) => {
             return onCheckoutApi(payload)
         },
+        retry: (failureCount, error: any) =>
+            error?.code === "ORDER_CONFLICT_RETRY" && failureCount < 2,
         onSuccess: () => {
             queryClient.invalidateQueries({
                 queryKey: ["get-my-orders"],

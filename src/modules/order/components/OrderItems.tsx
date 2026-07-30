@@ -3,6 +3,7 @@ import { Info, ChevronRight, RotateCcw, MoreHorizontal } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { OrderResponse } from '../types/api-response';
 import { formatDate, formatStepTime, formatVND } from '../../../utils/helper';
+import { useCheckoutStore } from '../../../store/useCheckoutStore';
 
 interface OrderItemProps {
   order: OrderResponse;
@@ -10,9 +11,11 @@ interface OrderItemProps {
 
 const OrderItem = ({ order }: OrderItemProps) => {
   const navigate = useNavigate();
+  const setCheckoutData = useCheckoutStore((state) => state.setCheckoutData);
 
   const getStatusConfig = () => {
     switch (order.status) {
+      case 'payment_failed': return { label: "Thanh toán lỗi", color: 'text-amber-600', bg: 'bg-amber-500' };
       case 'confirmed': return { label: "Đã xác nhận", color: 'text-blue-500', bg: 'bg-blue-500' };
       case 'shipping': return { label: "Đang giao", color: 'text-orange-500', bg: 'bg-orange-500' };
       case 'delivered': return { label: "Đã hoàn thành", color: 'text-green-500', bg: 'bg-green-500' };
@@ -25,7 +28,8 @@ const OrderItem = ({ order }: OrderItemProps) => {
 
   const handleRebuy = () => {
     const items = order.itemsForRebuy.map(i => ({ productId: i.productId, quantity: i.quantity }));
-    navigate('/checkout', { state: { source: 'cart', items: JSON.stringify(items) } });
+    setCheckoutData(items, "buy_now");
+    navigate('/checkout');
   };
 
   return (
@@ -48,10 +52,15 @@ const OrderItem = ({ order }: OrderItemProps) => {
           <p className="text-sm font-bold text-[#F26522] mt-1">
             {formatVND(order.totalPrice)}
           </p>
+          <p className="text-[11px] font-semibold text-gray-500 mt-1">
+            {order.paymentMethod === "vnpay"
+              ? "Thanh toán VNPay"
+              : "Thanh toán khi nhận hàng"}
+          </p>
         </div>
 
         <div className="flex flex-wrap gap-2 mt-4">
-          {(order.status === 'pending' || order.status === 'confirmed' || order.status === 'assigned') && (
+          {(['pending', 'confirmed', 'assigned', 'processing', 'pending_cancel', 'payment_failed', 'completed', 'refunded'] as string[]).includes(order.status) && (
             <button 
               onClick={() => navigate(`/order/detail`, { 
                 state: { orderId: order._id } 

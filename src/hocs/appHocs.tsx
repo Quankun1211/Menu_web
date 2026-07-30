@@ -2,13 +2,15 @@ import { type JSX, useEffect } from "react";
 import type { ComponentType } from "react";
 import { useAppStore } from "../store/app.store";
 import useGetMe from "../hooks/useGetMe";
+import { getRefreshToken, getToken } from "../utils/token";
 
 function AppHoc<T extends JSX.IntrinsicAttributes> (
     WrappedComponent: ComponentType<T>
 ) {
     const AuthenticatedComponent = (props: T) => {
         const {setUserData} = useAppStore()
-        const {data: meData} = useGetMe(true)
+        const hasStoredSession = Boolean(getToken() || getRefreshToken())
+        const {data: meData, isError, isFetched} = useGetMe(hasStoredSession)
 
         useEffect(() => {
             if(meData?.data) {
@@ -24,8 +26,10 @@ function AppHoc<T extends JSX.IntrinsicAttributes> (
                     avatar: user.avatar
                 }
                 setUserData(jwtPayload)
-            } 
-        }, [meData, setUserData])
+            } else if (!hasStoredSession || (isFetched && isError)) {
+                setUserData(null)
+            }
+        }, [hasStoredSession, isError, isFetched, meData, setUserData])
         return <WrappedComponent {...props}/>
     }
     return AuthenticatedComponent

@@ -1,6 +1,7 @@
 import axios from "axios";
 import { ApiUrls } from "../config/url";
 import { getRefreshToken, getToken, removeRefreshToken, removeToken, setRefreshToken, setToken } from "../utils/token";
+import { useAppStore } from "../store/app.store";
 
 const api = axios.create({
   baseURL: ApiUrls.apiBaseUrl,
@@ -69,9 +70,7 @@ api.interceptors.response.use(
     const isAuthRoute = ["auth/login", "auth/logout", "auth/register", "auth/refresh"]
       .some((path) => requestUrl.includes(path));
 
-    const isOptionalMeRequest = originalRequest?.url?.includes("/user/me");
-
-    if (error.response?.status === 401 && !isAuthRoute && !isOptionalMeRequest && !originalRequest?._retry) {
+    if (error.response?.status === 401 && !isAuthRoute && !originalRequest?._retry) {
       originalRequest._retry = true;
       try {
         refreshRequest ||= axios
@@ -93,7 +92,10 @@ api.interceptors.response.use(
       } catch (refreshError: any) {
         removeToken();
         removeRefreshToken();
-        window.location.href = "/account/login";
+        useAppStore.getState().setUserData(null);
+        if (window.location.pathname !== "/account/login") {
+          window.location.href = "/account/login";
+        }
         return Promise.reject(refreshError.response?.data || refreshError);
       }
     }

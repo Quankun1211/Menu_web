@@ -2,9 +2,19 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { OrderResponse } from '../types/api-response';
 import { formatDate, formatStepTime, formatVND } from '../../../utils/helper';
+import { useCheckoutStore } from '../../../store/useCheckoutStore';
 
 const CompletedOrderItem = ({ order }: { order: OrderResponse }) => {
   const navigate = useNavigate();
+  const setCheckoutData = useCheckoutStore((state) => state.setCheckoutData);
+
+  const handleReorder = () => {
+    setCheckoutData(
+      order.itemsForRebuy.map(({ productId, quantity }) => ({ productId, quantity })),
+      "buy_now",
+    );
+    navigate("/checkout");
+  };
 
   return (
     <div className="bg-white rounded-xl p-5 shadow-md border border-gray-50 flex flex-col gap-4">
@@ -28,8 +38,14 @@ const CompletedOrderItem = ({ order }: { order: OrderResponse }) => {
         </div>
       </div>
 
+      <button
+        onClick={() => navigate("/order/detail", { state: { orderId: order._id } })}
+        className="w-full py-2.5 border border-gray-300 text-gray-600 rounded-lg font-bold text-sm"
+      >
+        Chi tiết
+      </button>
       <button 
-        onClick={() => navigate('/checkout', { state: { items: JSON.stringify(order.itemsForRebuy) } })}
+        onClick={handleReorder}
         className="w-full py-2.5 border border-[#F26522] text-[#F26522] rounded-lg font-bold text-sm transition hover:bg-orange-50"
       >
         Mua lại

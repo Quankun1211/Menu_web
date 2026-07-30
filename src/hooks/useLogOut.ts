@@ -12,7 +12,7 @@ const useLogout = () => {
     const { mutate, isPending } = useMutation({
         mutationKey: ["logout"],
         mutationFn: onLogoutApi,
-        onSuccess: () => {
+        onSettled: () => {
             removeToken();
             removeRefreshToken();
             setUserData(null);

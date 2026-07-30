@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   EnvironmentOutlined, 
@@ -20,8 +20,14 @@ import useCheckout from '../hooks/useCheckout';
 import useGetMyCoupons from "../hooks/useGetMyCoupons";
 import PromoModal from '../components/PromoModal'; 
 import useShippingFee from '../../../hooks/useShippingFee';
+import api from '../../../services/axios';
+import { useQueryClient } from '@tanstack/react-query';
 
 export default function CheckoutPage() {
+  const checkoutSessionId = useRef(
+    localStorage.getItem("checkout_session_id") || crypto.randomUUID(),
+  );
+  localStorage.setItem("checkout_session_id", checkoutSessionId.current);
   const navigate = useNavigate();
   const { 
     selectedAddress, 
@@ -35,6 +41,7 @@ export default function CheckoutPage() {
   const { data: getAddress, isPending: addressPending } = useGetAddress();
   const { mutate: checkoutApply, isPending: checkoutPending } = useCheckout();
   const { data: configuredShippingFee = 25000 } = useShippingFee();
+  const queryClient = useQueryClient();
 
   const [isConfirmModalVisible, setConfirmModalVisible] = useState(false);
   const [isPromoModalVisible, setPromoModalVisible] = useState(false);
@@ -57,6 +64,27 @@ const finalTotal = Math.max(subTotal + shippingFee - Math.abs(discountValue), 0)
       navigate("/cart");
     }
   }, [checkoutItems, navigate]);
+
+  useEffect(() => {
+    const pendingOrderId = localStorage.getItem("pending_vnpay_order_id");
+    if (!pendingOrderId) return;
+
+    api.post(`/order/vnpay-reconcile/${pendingOrderId}`)
+      .then((response) => {
+        localStorage.removeItem("pending_vnpay_order_id");
+        queryClient.invalidateQueries({ queryKey: ["get-my-orders"] });
+        queryClient.invalidateQueries({ queryKey: ["cart"] });
+        if (response.data?.data?.paymentStatus === "paid") {
+          message.success("Giao dịch VNPay đã được xác nhận thành công");
+          navigate("/order/list", { replace: true });
+        } else {
+          message.info("Phiên thanh toán đã được hủy và đơn hàng đã được cập nhật");
+        }
+      })
+      .catch(() => {
+        message.warning("Hệ thống đang đối soát giao dịch VNPay, vui lòng kiểm tra lại đơn hàng sau");
+      });
+  }, [navigate, queryClient]);
 
   useEffect(() => {
     if (!selectedAddress && displayAddress) {
@@ -82,12 +110,17 @@ const finalTotal = Math.max(subTotal + shippingFee - Math.abs(discountValue), 0)
       couponCode: appliedCode,
       source: source as any,
       paymentMethod: paymentMethod,
-      platform: "web"
+      platform: "web",
+      checkoutSessionId: checkoutSessionId.current
     }, {
       onSuccess: (response) => {
+        localStorage.removeItem("checkout_session_id");
         
         const paymentUrl = response?.data?.paymentUrl;
         if (paymentUrl) {
+          if (response?.data?.orderId) {
+            localStorage.setItem("pending_vnpay_order_id", response.data.orderId);
+          }
           window.location.href = paymentUrl;
         } else {
           message.success('Đặt hàng thành công');
@@ -95,6 +128,15 @@ const finalTotal = Math.max(subTotal + shippingFee - Math.abs(discountValue), 0)
         }
       },
       onError: (error) => {
+        if ((error as any)?.code === "INSUFFICIENT_STOCK") {
+          const details = (error as any).details;
+          message.warning(
+            details?.availableQuantity !== undefined
+              ? `${details.productName} chỉ còn ${details.availableQuantity} sản phẩm. Vui lòng cập nhật số lượng.`
+              : (error as any).message,
+          );
+          return;
+        }
         message.error(error.message || 'Có lỗi xảy ra khi đặt hàng');
       }
     });

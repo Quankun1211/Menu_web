@@ -17,7 +17,8 @@ export const useAppStore = create<AppStore>()(
         try {
             if (token) {
                 const decoded = jwtDecode(token) as JwtPayload;
-                initUserData = decoded;
+                const isExpired = decoded.exp !== undefined && decoded.exp * 1000 <= Date.now();
+                initUserData = isExpired ? null : decoded;
             }
         } catch (error) {
             initUserData = null;

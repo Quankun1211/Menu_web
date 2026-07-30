@@ -15,6 +15,7 @@ const TABS = [
   { id: 'pending', label: 'Đang xử lý' },
   { id: 'shipping', label: 'Đang giao' },
   { id: 'cancelled', label: 'Đã hủy' },
+  { id: 'payment_failed', label: 'Thanh toán lỗi' },
 ];
 
 export default function OrdersPage() {
@@ -74,6 +75,7 @@ export default function OrdersPage() {
         {activeTab === 'pending' && <ProcessingOrders orders={orders.filter(o => o.status === 'pending')} />}
         {activeTab === 'shipping' && <ShippingOrders orders={orders.filter(o => o.status === 'shipping')} />}
         {activeTab === 'cancelled' && <CancelledOrders orders={orders.filter(o => o.status === 'cancelled')} />}
+        {activeTab === 'payment_failed' && <AllOrders orders={orders.filter(o => o.status === 'payment_failed')} />}
       </div>
       {isFetching && !isPending && <div className="flex justify-center py-2"><Spin size="small" /></div>}
       {(data?.pagination?.totalItems || 0) > pageSize && (
