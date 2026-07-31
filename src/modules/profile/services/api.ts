@@ -27,7 +27,7 @@ export const onGetCoupon = async (
 export const onCreateMyRecipe = async (
   formData: FormData
 ): Promise<BackendResponse<MyRecipeResponse>> => {
-  const res = await api.post("/recipes/mine", formData, {
+  const res = await api.post("/user-recipes", formData, {
     headers: {
       "Content-Type": "multipart/form-data",
     },
@@ -39,14 +39,14 @@ export const onGetMyRecipes = async (
   page = 1,
   limit = 10,
 ): Promise<PaginatedBackendResponse<MyRecipeResponse[]>> => {
-  const res = await api.get("/recipes/mine", { params: { page, limit } });
+  const res = await api.get("/user-recipes", { params: { page, limit } });
   return res.data;
 };
 
 export const onGetMyRecipesDetail = async (
   recipeId: string
 ): Promise<BackendResponse<MyRecipeDetailResponse>> => {
-  const res = await api.get(`/recipes/mine/${recipeId}`);
+  const res = await api.get(`/user-recipes/${recipeId}`);
   return res.data;
 };
 
@@ -54,7 +54,7 @@ export const onUpdateMyRecipe = async (
   recipeId: string, 
   formData: FormData 
 ): Promise<BackendResponse<MyRecipeResponse>> => {
-  const res = await api.put(`/recipes/mine/${recipeId}`, formData, {
+  const res = await api.put(`/user-recipes/${recipeId}`, formData, {
     headers: {
       "Content-Type": "multipart/form-data",
     },
@@ -65,7 +65,7 @@ export const onUpdateMyRecipe = async (
 export const onDeleteMyRecipe = async (
   recipeId: string
 ): Promise<BackendResponse<MyRecipeResponse>> => {
-  const res = await api.delete(`/recipes/mine/${recipeId}`);
+  const res = await api.delete(`/user-recipes/${recipeId}`);
   return res.data;
 };
 
@@ -73,7 +73,7 @@ export const onGetMySavedRecipes = async (
   page = 1,
   limit = 10,
 ): Promise<PaginatedBackendResponse<RecipeResponse[]>> => {
-  const res = await api.get("/recipes/saved", { params: { page, limit } });
+  const res = await api.get("/users/me/saved-recipes", { params: { page, limit } });
   return res.data;
 };
 

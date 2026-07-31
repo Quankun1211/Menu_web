@@ -17,7 +17,7 @@ type GetProductSpecialByRegionParams = {
 export const onGetProductByCategory = async (
   params?: GetProductByCategoryParams
 ): Promise<BackendResponse<ProductResponse[]>> => {
-  const { data } = await api.get("/products/by-category", {
+  const { data } = await api.get("/products", {
     params: {
       categoryId: params?.categoryId,
       sort: params?.sort,
@@ -42,7 +42,7 @@ export const onGetCategoryRecipeApi = async (
 export const onGetProductByRegion = async (
   params?: GetProductByRegionParams
 ): Promise<PaginatedBackendResponse<ProductResponse[]>> => {
-  const res = await api.get("/products/by-region", {
+  const res = await api.get("/products", {
     params: {
       region: params?.region,
       categoryId: params?.categoryId,
@@ -71,7 +71,7 @@ export const onGetRecipeApi = async (
   page = 1,
   limit = 12,
 ): Promise<PaginatedBackendResponse<RecipeDetailResponse[]>> => {
-  const res = await api.get("/recipes/by-category", {
+  const res = await api.get("/recipes", {
     params: { categoryId, page, limit },
   });
   return res.data;
@@ -94,7 +94,7 @@ export const onGetRecipeDetailApi = async (
 export const onSaveRecipeApi = async (
   recipeId: string
 ): Promise<BackendResponse<RecipeResponse>> => {
-  const res = await api.post(`/recipes/${recipeId}/saved-state`);
+  const res = await api.patch(`/users/me/saved-recipes/${recipeId}`);
   return res.data;
 };
 

@@ -3,10 +3,10 @@ import env from "./envConfig";
 export const ApiUrls = {
     apiBaseUrl: env.apiBaseUrl,
     auth: {
-        login: "/auth/login",
-        logout: "/auth/logout",
-        register: "/auth/register",
-        refreshToken: "/auth/refresh"
+        login: "/auth/sessions",
+        logout: "/auth/sessions",
+        register: "/auth/registrations",
+        refreshToken: "/auth/session-refreshes"
     },
     user: {
         queryProfile: "/users/:$1",

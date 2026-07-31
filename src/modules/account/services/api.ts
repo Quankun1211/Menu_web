@@ -6,7 +6,7 @@ export const onLogInApi = async(
     payload: logInRequest
 ) : Promise<BackendResponse<LoginResponse>> => {
     const {username, password} = payload
-    const data = await api.post("/auth/login", {
+    const data = await api.post("/auth/sessions", {
         username,
         password,
         clientType: "spa"
@@ -17,7 +17,7 @@ export const onVerifyApi = async (
     payload: { email: string; otp: string, type: string }
 ) : Promise<BackendResponse<any>> => {
     const { email, otp, type } = payload;
-    const data = await api.post("/auth/verify-otp", {
+    const data = await api.post("/auth/email-verifications", {
         email,
         otp,
         type
@@ -28,7 +28,7 @@ export const onForgotPasswordApi = async (
     payload: { email: string }
 ) : Promise<BackendResponse<any>> => {
     const { email } = payload;
-    const data = await api.post("/auth/forgot-password", {
+    const data = await api.post("/auth/password-reset-requests", {
         email
     });
     return data.data;
@@ -37,7 +37,7 @@ export const onResendOTPApi = async (
     payload: { email: string; type?: "verify" | "reset" }
 ) : Promise<BackendResponse<any>> => {
     const { email, type = "verify" } = payload;
-    const data = await api.post("/auth/resend-otp", {
+    const data = await api.post("/auth/email-verification-deliveries", {
         email,
         type
     });
@@ -47,7 +47,7 @@ export const onResetPasswordApi = async (
     payload: { email: string; otp: string; newPassword: string }
 ) : Promise<BackendResponse<any>> => {
     const { email, otp, newPassword } = payload;
-    const data = await api.post("/auth/reset-password", {
+    const data = await api.put("/auth/password-resets", {
         email,
         otp,
         newPassword
@@ -59,7 +59,7 @@ export const onRegisterApi = async(
 ) : Promise<BackendResponse<RegisterResponse>> => {
     console.log(payload)
     const {email, name, password, username, confirmPassword: confirmPassword} = payload
-    const data = await api.post("/auth/register", {
+    const data = await api.post("/auth/registrations", {
         email,
         name, 
         password,
@@ -72,7 +72,7 @@ export const onSocialLoginApi = async (
     provider: SocialProvider,
     token: string
 ): Promise<BackendResponse<LoginResponse>> => {
-    const { data } = await api.post(`/auth/${provider}`, {
+    const { data } = await api.post(`/auth/identity-providers/${provider}/sessions`, {
         token,
         clientType: "spa"
     });

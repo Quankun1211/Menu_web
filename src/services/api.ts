@@ -9,13 +9,13 @@ export const onGetMeApi = async (): Promise<BackendResponse<UserRecord>> => {
 }
 
 export const onLogoutApi = async (): Promise<BackendResponse<{message: string}>> => {
-    const data = await api.post("/auth/logout", { token: getRefreshToken() })
+    const data = await api.delete("/auth/sessions", { data: { token: getRefreshToken() } })
     return data.data
 }
 export const onSearchProducts = async (
   keyword: string, sort?: string
 ): Promise<BackendResponse<SearchProductResponse[]>> => {
-  const { data } = await api.get('/products/search', {
+  const { data } = await api.get('/products', {
     params: { q: keyword, sort: sort },
   });
   return data;
@@ -26,11 +26,11 @@ export const onGetNotification = async () : Promise<BackendResponse<Notification
 }
 
 export const onReadNotification = async (id: string): Promise<BackendResponse<NotificationResponse>> => {
-  const data = await api.patch(`/notifications/${id}/read-status`);
+  const data = await api.patch(`/notifications/${id}`);
   return data.data;
 };
 export const onReadAllNotification = async (): Promise<BackendResponse<NotificationResponse>> => {
-  const data = await api.patch(`/notifications/read-status`);
+  const data = await api.patch(`/notifications`);
   return data.data;
 };
 export const onAskChatbot = async (payload: { message: string, history: any[] }) => {
