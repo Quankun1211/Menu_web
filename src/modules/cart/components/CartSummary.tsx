@@ -2,10 +2,11 @@ import React from 'react';
 import { ShoppingCartOutlined, InfoCircleOutlined } from '@ant-design/icons';
 import { Button, Divider, Tooltip } from 'antd';
 import { formatVND } from '../../../utils/helper';
+import useShippingFee from '../../../hooks/useShippingFee';
 
 const CartSummarySide = ({ total, selectedCount, onCheckout }) => {
-  const shippingFee = 25000;
-  const grandTotal = total > 0 ? total + shippingFee : 0;
+  const { data: shippingFee, isPending: shippingFeePending, isError: shippingFeeError } = useShippingFee();
+  const grandTotal = total > 0 && shippingFee !== undefined ? total + shippingFee : total;
 
   return (
     <div className="bg-white rounded-[40px] p-8 shadow-xl border border-orange-50">
@@ -24,7 +25,9 @@ const CartSummarySide = ({ total, selectedCount, onCheckout }) => {
               <InfoCircleOutlined className="text-xs" />
             </Tooltip>
           </div>
-          <span className="font-bold text-[#5C4033]">{formatVND(shippingFee)}</span>
+          <span className="font-bold text-[#5C4033]">
+            {shippingFeePending ? 'Đang tải...' : shippingFeeError ? 'Không tải được' : formatVND(shippingFee)}
+          </span>
         </div>
 
         <Divider className="my-6 border-gray-100" />
@@ -46,7 +49,7 @@ const CartSummarySide = ({ total, selectedCount, onCheckout }) => {
           size="large" 
           block
           icon={<ShoppingCartOutlined />}
-          disabled={selectedCount === 0}
+          disabled={selectedCount === 0 || shippingFeePending || shippingFeeError}
           onClick={onCheckout}
           className="h-16 rounded-2xl bg-[#E25822] hover:bg-[#D35400] border-none font-black text-lg shadow-xl shadow-orange-100 flex items-center justify-center gap-2"
         >

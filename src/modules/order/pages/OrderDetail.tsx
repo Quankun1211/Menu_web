@@ -216,7 +216,7 @@ export default function OrderDetailWeb() {
                     Tiếp tục thanh toán
                   </Button>
                 )}
-              {["pending", "confirmed", "processing"].includes(status) && (
+              {["pending", "assigned", "confirmed", "processing"].includes(status) && (
                 <Button 
                   danger 
                   className="h-12 rounded-xl font-bold bg-red-50 border-none text-red-500 hover:bg-red-500 hover:text-white"

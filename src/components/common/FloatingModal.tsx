@@ -2,7 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { MessageSquare } from 'lucide-react';
 
-const FloatingChatbot = ({ onClick }) => {
+const FloatingChatbot = ({ onClick, hasUnread = false }) => {
   return (
     <div className="fixed bottom-8 right-8 z-[9999] flex items-center justify-center">
       <motion.button
@@ -14,7 +14,7 @@ const FloatingChatbot = ({ onClick }) => {
       >
         <MessageSquare color="white" size={28} />
         
-        <span className="absolute top-0 right-0 w-4 h-4 bg-[#4CAF50] border-2 border-white rounded-full" />
+        <span className={`absolute top-0 right-0 w-4 h-4 border-2 border-white rounded-full ${hasUnread ? "bg-red-500 animate-pulse" : "bg-[#4CAF50]"}`} />
       </motion.button>
     </div>
   );

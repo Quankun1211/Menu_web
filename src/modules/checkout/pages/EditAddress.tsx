@@ -22,6 +22,7 @@ import {
 import useGetAddressDetail from "../hooks/useGetAddressDetail";
 import useUpdateAddress from "../hooks/useUpdateAddress";
 import debounce from 'lodash/debounce';
+import { useCheckoutStore } from '../../../store/useCheckoutStore';
 
 const GOONG_API_KEY = import.meta.env.VITE_GOONG_API_KEY || "";
 
@@ -34,6 +35,7 @@ export default function EditAddressPage() {
   const [form] = Form.useForm();
   const { data: detailData, isPending: loadingDetail } = useGetAddressDetail(addressId);
   const { mutate: updateAddress, isPending: updatePending } = useUpdateAddress();
+  const { selectedAddress, setSelectedAddress } = useCheckoutStore();
 
   const [isMapModalVisible, setIsMapModalVisible] = useState(false);
   const [searchText, setSearchText] = useState('');
@@ -47,6 +49,11 @@ export default function EditAddressPage() {
         phone: detailData.data.phone,
         address: detailData.data.address,
         isDefault: detailData.data.isDefault,
+        province: detailData.data.province,
+        district: detailData.data.district,
+        ward: detailData.data.ward,
+        latitude: detailData.data.latitude,
+        longitude: detailData.data.longitude,
       });
     }
   }, [detailData, form]);
@@ -55,9 +62,10 @@ export default function EditAddressPage() {
     updateAddress(
       { addressId, ...values },
       {
-        onSuccess: () => {
+        onSuccess: (response) => {
+          if (selectedAddress?._id === addressId) setSelectedAddress(response.data);
           message.success('Cập nhật địa chỉ thành công');
-          navigate("/checkout/address", { state: { source, items } });
+          navigate("/checkout/address", { replace: true, state: { source, items } });
         },
         onError: (error: any) => {
           message.error(error.message || 'Cập nhật thất bại');
@@ -100,7 +108,14 @@ export default function EditAddressPage() {
       );
       const data = await res.json();
       if (data.status === 'OK') {
-        form.setFieldsValue({ address: data.result.formatted_address });
+        form.setFieldsValue({
+          address: data.result.formatted_address,
+          province: data.result.compound?.province,
+          district: data.result.compound?.district,
+          ward: data.result.compound?.commune,
+          latitude: data.result.geometry?.location?.lat,
+          longitude: data.result.geometry?.location?.lng,
+        });
         setIsMapModalVisible(false);
         setSearchText('');
         setSearchResults([]);
@@ -140,6 +155,11 @@ export default function EditAddressPage() {
           onFinish={handleSave}
           requiredMark={false}
         >
+          <Form.Item name="province" hidden><Input /></Form.Item>
+          <Form.Item name="district" hidden><Input /></Form.Item>
+          <Form.Item name="ward" hidden><Input /></Form.Item>
+          <Form.Item name="latitude" hidden><Input /></Form.Item>
+          <Form.Item name="longitude" hidden><Input /></Form.Item>
           <Form.Item
             label={<span className="font-bold text-gray-600">Họ và tên</span>}
             name="name"
@@ -157,7 +177,7 @@ export default function EditAddressPage() {
             name="phone"
             rules={[
               { required: true, message: 'Vui lòng nhập số điện thoại' },
-              { pattern: /^[0-9]{10,11}$/, message: 'Số điện thoại không hợp lệ' }
+              { pattern: /^(?:\+84|0)\d{9}$/, message: 'Số điện thoại Việt Nam không hợp lệ' }
             ]}
           >
             <Input 

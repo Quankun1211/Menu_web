@@ -3,6 +3,11 @@ export type AddAddressRequest = {
     phone: string;
     address: string;
     isDefault?: boolean;
+    province?: string;
+    district?: string;
+    ward?: string;
+    latitude?: number;
+    longitude?: number;
 }
 
 export type UpdateAddressRequest = {
@@ -11,6 +16,11 @@ export type UpdateAddressRequest = {
     phone: string;
     address: string;
     isDefault: boolean
+    province?: string;
+    district?: string;
+    ward?: string;
+    latitude?: number;
+    longitude?: number;
 }
 
 export type SetDefaultAddressRequest = {

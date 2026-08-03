@@ -1,11 +1,11 @@
 import { BackendResponse } from "@/libs/shared/types/backend-response";
 import { AddAddressRequest, UpdateAddressRequest, PreviewCheckoutRequest, ApplyCouponRequest, CheckoutRequest } from "../types/api-request";
-import { AddAddressResponse, AddressModel, GetAddressesResponse, UpdateAddressResponse, PreviewCheckoutResponse, ApplyCouponResponse, OrderResponse, MyCouponResponse } from "../types/api-response";
+import { AddressModel, GetAddressesResponse, PreviewCheckoutResponse, ApplyCouponResponse, OrderResponse, MyCouponResponse } from "../types/api-response";
 import api from "../../../services/axios";
 
 export const onAddAddressApi = async (
     payload: AddAddressRequest
-) : Promise<BackendResponse<AddAddressResponse>> => {
+) : Promise<BackendResponse<AddressModel>> => {
     const { data } = await api.post("/addresses", payload);
     return data
 }
@@ -27,7 +27,7 @@ export const onGetAddressDetail = async (
 
 export const onUpdateAddressApi = async (
   params: UpdateAddressRequest
-): Promise<BackendResponse<UpdateAddressResponse>> => {
+): Promise<BackendResponse<AddressModel>> => {
   const { addressId, ...body } = params;
 
   const { data } = await api.put(
@@ -35,6 +35,15 @@ export const onUpdateAddressApi = async (
     body
   );
 
+  return data;
+};
+export const onDeleteAddressApi = async (addressId: string): Promise<BackendResponse<null>> => {
+  const { data } = await api.delete(`/addresses/${addressId}`);
+  return data;
+};
+
+export const onSetDefaultAddressApi = async (addressId: string): Promise<BackendResponse<null>> => {
+  const { data } = await api.put(`/addresses/${addressId}/default`);
   return data;
 };
 export const previewCheckoutApi = async (
@@ -55,5 +64,11 @@ export const onCheckoutApi = async(
   payload: CheckoutRequest
 ): Promise<BackendResponse<OrderResponse>> => {
   const { data } = await api.post("/orders", payload)
+  if (!data?.success || !data?.data?.orderId) {
+    const error = new Error(data?.message || "Không thể xác nhận đơn hàng") as Error & { code?: string; details?: unknown };
+    error.code = data?.code;
+    error.details = data?.details;
+    throw error;
+  }
   return data
 }

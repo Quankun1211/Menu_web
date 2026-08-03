@@ -6,7 +6,11 @@ export default function useShippingFee() {
     queryKey: ["system-setting", "shipping-fee"],
     queryFn: async () => {
       const response = await api.get("/settings/shipping");
-      return Number(response.data?.data?.shippingFee ?? 25000);
+      const shippingFee = Number(response.data?.data?.shippingFee);
+      if (!Number.isFinite(shippingFee) || shippingFee < 0) {
+        throw new Error("Phí vận chuyển từ hệ thống không hợp lệ");
+      }
+      return shippingFee;
     },
     staleTime: 5 * 60 * 1000,
   });

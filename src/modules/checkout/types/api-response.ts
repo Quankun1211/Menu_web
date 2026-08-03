@@ -5,6 +5,11 @@ export type AddressModel = {
     phone: string;
     address: string;
     isDefault: boolean;
+    province?: string;
+    district?: string;
+    ward?: string;
+    latitude?: number;
+    longitude?: number;
     createdAt: string;
     updatedAt: string;
   }

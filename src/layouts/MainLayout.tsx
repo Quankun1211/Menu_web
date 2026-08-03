@@ -3,14 +3,16 @@ import { Outlet, useLocation } from "react-router";
 import AppHoc from "../hocs/appHocs";
 import Header from "../components/Header/Header";
 import FloatingChatbot from "../components/common/FloatingModal"; 
-import ChatBotWindow from "../components/common/Chatbot"
+import CustomerChat from "../components/common/CustomerChat"
 import Footer from "../components/footer/Footer";
 import TestInstructionsModal from "../components/common/TestInstruction";
 import RouteSeo from "../components/common/RouteSeo";
 import SeoBreadcrumbs from "../components/common/SeoBreadcrumbs";
 import CommerceTrustBar from "../components/common/CommerceTrustBar";
+import MobileBottomNavigation from "../components/common/MobileBottomNavigation";
 function MainLayout() {
   const [isChatOpen, setIsChatOpen] = useState(false);
+  const [chatUnread, setChatUnread] = useState(0);
 
   const { pathname } = useLocation();
   const scrollRef = useRef(null);
@@ -26,25 +28,15 @@ function MainLayout() {
   }, [pathname]);
 
   return (
-    <div className="flex flex-col h-screen overflow-hidden bg-[#faece1]">
+    <div className="flex h-screen flex-col overflow-hidden bg-[#FFFDF9]">
       <RouteSeo />
       <Header />
       <CommerceTrustBar />
 
       <main 
         ref={scrollRef}
-        className="flex-1 overflow-y-auto relative scroll-smooth" 
-        style={{
-          background: `linear-gradient(180deg, #C9936E 0%, #E8C5A8 20%, #ffeddf 50%, #f2dbc9 100%)`,
-        }}
+        className="relative flex-1 overflow-y-auto bg-[#FFFDF9] scroll-smooth"
       >
-        <div 
-          className="absolute inset-0 opacity-10 pointer-events-none"
-          style={{
-            backgroundImage: `url("https://www.transparenttextures.com/patterns/natural-paper.png")`,
-          }}
-        />
-
         <div className="max-w-7xl mx-auto px-4 md:px-10 lg:px-10 py-8 relative z-10 min-h-[calc(100vh-80px)]">
           <SeoBreadcrumbs />
           <Outlet />
@@ -53,13 +45,15 @@ function MainLayout() {
         <Footer />
       </main>
 
-      <FloatingChatbot onClick={() => setIsChatOpen(!isChatOpen)} />
+      <FloatingChatbot onClick={() => setIsChatOpen(!isChatOpen)} hasUnread={chatUnread > 0} />
 
-      <ChatBotWindow 
+      <CustomerChat
         isOpen={isChatOpen} 
         onClose={() => setIsChatOpen(false)} 
+        onUnreadChange={setChatUnread}
       />
       <TestInstructionsModal />
+      <MobileBottomNavigation />
     </div>
   );
 }

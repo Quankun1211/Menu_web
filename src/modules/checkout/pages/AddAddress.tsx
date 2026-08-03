@@ -23,6 +23,7 @@ import {
 } from 'antd';
 import useAddAddress from '../hooks/useAddAddress';
 import debounce from 'lodash/debounce';
+import { useCheckoutStore } from '../../../store/useCheckoutStore';
 
 const GOONG_API_KEY = import.meta.env.VITE_GOONG_API_KEY || "";
 
@@ -33,6 +34,7 @@ export default function AddAddressPage() {
 
   const [form] = Form.useForm();
   const { mutate: addAddress, isPending } = useAddAddress();
+  const setSelectedAddress = useCheckoutStore((state) => state.setSelectedAddress);
 
   const [isMapModalVisible, setIsMapModalVisible] = useState(false);
   const [searchText, setSearchText] = useState('');
@@ -43,9 +45,10 @@ export default function AddAddressPage() {
     addAddress(
       { ...values },
       {
-        onSuccess: () => {
+        onSuccess: (response) => {
+          setSelectedAddress(response.data);
           message.success('Đã thêm địa chỉ mới');
-          navigate("/checkout/address", { state: { source, items } });
+          navigate("/checkout", { replace: true, state: { source, items } });
         },
         onError: (error: any) => {
           message.error(error.message || 'Thêm địa chỉ thất bại');
@@ -88,7 +91,14 @@ export default function AddAddressPage() {
       );
       const data = await res.json();
       if (data.status === 'OK') {
-        form.setFieldsValue({ address: data.result.formatted_address });
+        form.setFieldsValue({
+          address: data.result.formatted_address,
+          province: data.result.compound?.province,
+          district: data.result.compound?.district,
+          ward: data.result.compound?.commune,
+          latitude: data.result.geometry?.location?.lat,
+          longitude: data.result.geometry?.location?.lng,
+        });
         setIsMapModalVisible(false);
         setSearchText('');
         setSearchResults([]);
@@ -120,6 +130,11 @@ export default function AddAddressPage() {
           initialValues={{ isDefault: false }}
           requiredMark={false}
         >
+          <Form.Item name="province" hidden><Input /></Form.Item>
+          <Form.Item name="district" hidden><Input /></Form.Item>
+          <Form.Item name="ward" hidden><Input /></Form.Item>
+          <Form.Item name="latitude" hidden><Input /></Form.Item>
+          <Form.Item name="longitude" hidden><Input /></Form.Item>
           <Form.Item
             label={<span className="font-bold text-gray-600">Họ và tên</span>}
             name="name"
@@ -137,7 +152,7 @@ export default function AddAddressPage() {
             name="phone"
             rules={[
               { required: true, message: 'Vui lòng nhập số điện thoại' },
-              { pattern: /^[0-9]{10,11}$/, message: 'Số điện thoại không hợp lệ' }
+              { pattern: /^(?:\+84|0)\d{9}$/, message: 'Số điện thoại Việt Nam không hợp lệ' }
             ]}
           >
             <Input 
