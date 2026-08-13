@@ -226,33 +226,48 @@ const RecipeDetail = () => {
                     const originalPrice = item.ingredientId?.price || 0;
                     const effectivePrice = getEffectivePrice(item.ingredientId);
                     const hasActiveSale = effectivePrice < originalPrice;
-
+                    const image = item.ingredientId?.images || "/assets/placeholder.png";
+                    
                     return (
-                      <div 
+                      <div
                         key={item._id}
                         onClick={() => toggleCheck(item)}
                         className={`
-                          flex items-center justify-between p-4 rounded-2xl border transition-all
+                          flex items-center gap-4 p-4 rounded-2xl border transition-all
                           ${isBuyable ? 'cursor-pointer' : 'bg-gray-50 opacity-60 cursor-not-allowed'}
-                          ${isChecked ? 'bg-orange-50 border-orange-200' : 'bg-white border-gray-100 hover:border-orange-100'}
+                          ${isChecked
+                            ? 'bg-orange-50 border-orange-200'
+                            : 'bg-white border-gray-100 hover:border-orange-100'}
                         `}
                       >
-                        <div className="flex items-center gap-4">
+                        {/* Nội dung */}
+                        <div className="flex min-w-0 flex-1 items-center gap-4">
                           {isBuyable ? (
-                            isChecked ? <CheckSquareFilled className="text-xl text-orange-500" /> : <BorderOutlined className="text-xl text-gray-300" />
+                            isChecked ? (
+                              <CheckSquareFilled className="shrink-0 text-xl text-orange-500" />
+                            ) : (
+                              <BorderOutlined className="shrink-0 text-xl text-gray-300" />
+                            )
                           ) : (
-                            <StopOutlined className="text-xl text-gray-300" />
+                            <StopOutlined className="shrink-0 text-xl text-gray-300" />
                           )}
-                          <div>
-                            <p className={`font-bold text-sm ${isChecked ? 'text-orange-700' : 'text-[#5C4033]'}`}>
+
+                          <div className="min-w-0">
+                            <p
+                              className={`font-bold text-sm truncate ${
+                                isChecked ? 'text-orange-700' : 'text-[#5C4033]'
+                              }`}
+                            >
                               {item.ingredientId?.name || item.ingredientId?.customName}
                             </p>
+
                             <div className="flex items-center gap-2">
                               {isBuyable ? (
                                 <>
                                   <span className="text-orange-600 font-bold text-xs">
                                     {formatPrice(effectivePrice)}
                                   </span>
+
                                   {hasActiveSale && (
                                     <span className="text-gray-400 line-through text-[10px]">
                                       {formatPrice(originalPrice)}
@@ -260,14 +275,25 @@ const RecipeDetail = () => {
                                   )}
                                 </>
                               ) : (
-                                <span className="text-[10px] text-gray-400 uppercase font-black">Tự chuẩn bị</span>
+                                <span className="text-[10px] text-gray-400 uppercase font-black">
+                                  Tự chuẩn bị
+                                </span>
                               )}
                             </div>
                           </div>
                         </div>
-                        <span className="text-xs font-bold text-gray-400 bg-gray-50 px-3 py-1 rounded-full">
+
+                        <span className="shrink-0 text-xs font-bold text-gray-400 bg-gray-50 px-3 py-1 rounded-full">
                           {formatDisplayQuantity(item.quantity, item.ingredientId?.unit)}
                         </span>
+
+                        <div className="shrink-0 w-16 h-16 rounded-xl overflow-hidden bg-gray-100">
+                          <img
+                            src={image}
+                            className="w-full h-full object-cover"
+                            alt={item.ingredientId?.name || item.ingredientId?.customName || recipe?.name}
+                          />
+                        </div>
                       </div>
                     );
                   })}

@@ -1,57 +1,169 @@
 import React from 'react';
-import { ShoppingCartOutlined, InfoCircleOutlined } from '@ant-design/icons';
-import { Button, Divider, Tooltip } from 'antd';
+import {
+  ShoppingCartOutlined,
+  InfoCircleOutlined,
+} from '@ant-design/icons';
+import {
+  Button,
+  Divider,
+  Tooltip,
+} from 'antd';
 import { formatVND } from '../../../utils/helper';
 import useShippingFee from '../../../hooks/useShippingFee';
 
-const CartSummarySide = ({ total, selectedCount, onCheckout }) => {
-  const { data: shippingFee, isPending: shippingFeePending, isError: shippingFeeError } = useShippingFee();
-  const grandTotal = total > 0 && shippingFee !== undefined ? total + shippingFee : total;
+const CartSummarySide = ({
+  total,
+  selectedCount,
+  hasInactiveProduct,
+  onCheckout,
+}) => {
+  const {
+    data: shippingFee,
+    isPending: shippingFeePending,
+    isError: shippingFeeError,
+  } = useShippingFee();
+
+  const grandTotal =
+    total > 0 &&
+    shippingFee !== undefined
+      ? total + shippingFee
+      : total;
+
+  /**
+   * Không cho thanh toán nếu:
+   *
+   * 1. Chưa chọn sản phẩm
+   * 2. Trong giỏ còn sản phẩm inactive
+   * 3. Đang tải phí ship
+   * 4. Lỗi phí ship
+   */
+  const isCheckoutDisabled =
+    selectedCount === 0 ||
+    hasInactiveProduct ||
+    shippingFeePending ||
+    shippingFeeError;
 
   return (
     <div className="bg-white rounded-[40px] p-8 shadow-xl border border-orange-50">
-      <h3 className="text-xl font-black text-[#5C4033] mb-6">Tóm tắt đơn hàng</h3>
-      
+
+      <h3 className="text-xl font-black text-[#5C4033] mb-6">
+        Tóm tắt đơn hàng
+      </h3>
+
       <div className="space-y-4">
+
+        {/* SUBTOTAL */}
         <div className="flex justify-between text-gray-500">
-          <span>Tạm tính ({selectedCount} sản phẩm)</span>
-          <span className="font-bold text-[#5C4033]">{formatVND(total)}</span>
+
+          <span>
+            Tạm tính ({selectedCount} sản phẩm)
+          </span>
+
+          <span className="font-bold text-[#5C4033]">
+            {formatVND(total)}
+          </span>
+
         </div>
-        
+
+        {/* SHIPPING */}
         <div className="flex justify-between text-gray-500 italic">
+
           <div className="flex items-center gap-1">
-            <span>Phí vận chuyển</span>
+
+            <span>
+              Phí vận chuyển
+            </span>
+
             <Tooltip title="Phí cố định cho mọi đơn hàng">
               <InfoCircleOutlined className="text-xs" />
             </Tooltip>
+
           </div>
+
           <span className="font-bold text-[#5C4033]">
-            {shippingFeePending ? 'Đang tải...' : shippingFeeError ? 'Không tải được' : formatVND(shippingFee)}
+
+            {shippingFeePending
+              ? 'Đang tải...'
+              : shippingFeeError
+                ? 'Không tải được'
+                : formatVND(shippingFee)}
+
           </span>
+
         </div>
 
         <Divider className="my-6 border-gray-100" />
 
+        {/* GRAND TOTAL */}
         <div className="flex justify-between items-end mb-8">
-          <span className="font-bold text-[#5C4033] text-lg">Tổng cộng</span>
+
+          <span className="font-bold text-[#5C4033] text-lg">
+            Tổng cộng
+          </span>
+
           <div className="text-right">
+
             <p className="text-3xl font-black text-orange-600 leading-none">
               {formatVND(grandTotal)}
             </p>
+
             <p className="text-[10px] text-gray-400 uppercase tracking-widest mt-2 font-bold">
               Đã bao gồm VAT
             </p>
+
           </div>
+
         </div>
 
-        <Button 
-          type="primary" 
-          size="large" 
+        {/* INACTIVE WARNING */}
+        {hasInactiveProduct && (
+          <div className="flex items-center gap-2 p-3 rounded-xl bg-gray-100 border border-gray-200 text-gray-600 text-sm">
+
+            <InfoCircleOutlined />
+
+            <span>
+              Vui lòng xóa sản phẩm không còn hoạt động trước khi thanh toán.
+            </span>
+
+          </div>
+        )}
+
+        {/* NO SELECTION */}
+        {!hasInactiveProduct &&
+          selectedCount === 0 && (
+            <div className="flex items-center gap-2 p-3 rounded-xl bg-orange-50 border border-orange-100 text-orange-700 text-sm">
+
+              <InfoCircleOutlined />
+
+              <span>
+                Vui lòng chọn sản phẩm để thanh toán.
+              </span>
+
+            </div>
+          )}
+
+        {/* CHECKOUT */}
+        <Button
+          type="primary"
+          size="large"
           block
           icon={<ShoppingCartOutlined />}
-          disabled={selectedCount === 0 || shippingFeePending || shippingFeeError}
+          disabled={isCheckoutDisabled}
           onClick={onCheckout}
-          className="h-16 rounded-2xl bg-[#E25822] hover:bg-[#D35400] border-none font-black text-lg shadow-xl shadow-orange-100 flex items-center justify-center gap-2"
+          className="
+            h-16
+            rounded-2xl
+            bg-[#E25822]
+            hover:bg-[#D35400]
+            border-none
+            font-black
+            text-lg
+            shadow-xl
+            shadow-orange-100
+            flex items-center
+            justify-center
+            gap-2
+          "
         >
           TIẾN HÀNH THANH TOÁN
         </Button>
@@ -59,7 +171,9 @@ const CartSummarySide = ({ total, selectedCount, onCheckout }) => {
         <p className="text-center text-gray-400 text-xs mt-4">
           Bằng cách đặt hàng, bạn đồng ý với Điều khoản dịch vụ của chúng tôi.
         </p>
+
       </div>
+
     </div>
   );
 };

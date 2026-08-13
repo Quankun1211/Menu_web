@@ -26,8 +26,6 @@ import useShippingFee from "../../../hooks/useShippingFee";
 import api from "../../../services/axios";
 
 export default function CheckoutPage() {
-  // Một khóa chỉ sống trong đúng phiên checkout hiện tại. Nếu tái sử dụng khóa
-  // của đơn cũ, backend sẽ trả lại đơn đó theo cơ chế idempotency thay vì tạo đơn mới.
   const checkoutSessionId = useRef(crypto.randomUUID());
 
   const navigate = useNavigate();

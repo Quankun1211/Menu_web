@@ -30,6 +30,7 @@ export type ProductResponse = {
     nutrition: NutritionData,
     usage_instruction: string[],
     relatedRecipes: RecipeDetailResponse[],
+    isActive: boolean,
 }
 
 export type CategoryResponse = {
