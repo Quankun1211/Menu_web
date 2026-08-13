@@ -43,11 +43,6 @@ const CartItemRow = ({
   const hasDiscount =
     discountPercent && discountPercent > 0;
 
-  /**
-   * ============================
-   * CẬP NHẬT SỐ LƯỢNG
-   * ============================
-   */
   const handleUpdateQty = val => {
     if (
       !isProductActive ||
@@ -78,11 +73,6 @@ const CartItemRow = ({
     );
   };
 
-  /**
-   * ============================
-   * XÓA SẢN PHẨM
-   * ============================
-   */
   const handleDelete = () => {
     if (removeLoading) return;
 
@@ -100,14 +90,6 @@ const CartItemRow = ({
     );
   };
 
-  /**
-   * ============================
-   * CHECKBOX THANH TOÁN
-   * ============================
-   *
-   * Checkbox luôn hiển thị.
-   * Không phụ thuộc isEditing.
-   */
   const handleSelect = e => {
     e.stopPropagation();
 
@@ -134,9 +116,6 @@ const CartItemRow = ({
         }
       `}
     >
-      {/* =========================================
-          PRODUCT
-      ========================================= */}
       <div
         className={`
           flex items-center gap-6
@@ -148,10 +127,6 @@ const CartItemRow = ({
           }
         `}
       >
-        {/* =====================================
-            CHECKBOX THANH TOÁN
-            LUÔN HIỂN THỊ
-        ===================================== */}
         <button
           type="button"
           onClick={handleSelect}
@@ -206,9 +181,6 @@ const CartItemRow = ({
           )}
         </button>
 
-        {/* =====================================
-            IMAGE
-        ===================================== */}
         <div
           className="
             relative
@@ -252,9 +224,6 @@ const CartItemRow = ({
             )}
         </div>
 
-        {/* =====================================
-            INFO
-        ===================================== */}
         <div className="flex-1 min-w-0">
           <h4
             className="
@@ -293,9 +262,6 @@ const CartItemRow = ({
         </div>
       </div>
 
-      {/* =========================================
-          RIGHT ACTIONS
-      ========================================= */}
       <div
         className="
           flex items-center
@@ -305,9 +271,6 @@ const CartItemRow = ({
           z-30
         "
       >
-        {/* =====================================
-            QUANTITY
-        ===================================== */}
         <div
           className={`
             flex items-center
@@ -378,10 +341,6 @@ const CartItemRow = ({
           />
         </div>
 
-        {/* =====================================
-            DELETE / TRASH
-            LUÔN HIỂN THỊ
-        ===================================== */}
         <Popconfirm
           title="Xóa sản phẩm?"
           description={
@@ -421,9 +380,6 @@ const CartItemRow = ({
         </Popconfirm>
       </div>
 
-      {/* =========================================
-          INACTIVE PRODUCT OVERLAY
-      ========================================= */}
       {!isProductActive && (
         <div
           className="
