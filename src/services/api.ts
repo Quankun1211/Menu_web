@@ -33,7 +33,11 @@ export const onReadAllNotification = async (): Promise<BackendResponse<Notificat
   const data = await api.patch(`/notifications`);
   return data.data;
 };
-export const onAskChatbot = async (payload: { message: string, history: any[] }) => {
-    const res = await api.post("/chatbot/messages", payload);
-    return res.data;
-}
+export const onAskChatbot = async (payload: {
+  message: string;
+  history: any[];
+}) => {
+
+  const res = await api.post("/chatbot/messages", payload);
+  return res.data;
+};

@@ -27,7 +27,6 @@ export default function SpecialProduct() {
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 12;
   
-  // Thêm state để theo dõi ID sản phẩm đang được thêm
   const [addingId, setAddingId] = useState(null);
 
   const { data: productsData, isPending, isFetching } = useGetProductSpecial({
@@ -47,7 +46,7 @@ export default function SpecialProduct() {
       return;
     }
 
-    setAddingId(product._id); // Bắt đầu loading cho sản phẩm này
+    setAddingId(product._id); 
 
     addToCart(
       { productId: product._id, quantity: 1 }, 
@@ -56,7 +55,7 @@ export default function SpecialProduct() {
           message.success(`Đã thêm ${product.name} vào giỏ hàng 🛒`);
         },
         onSettled: () => {
-          setAddingId(null); // Kết thúc loading dù thành công hay thất bại
+          setAddingId(null); 
         }
       }
     );

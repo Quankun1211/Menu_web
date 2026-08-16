@@ -20,7 +20,7 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     const onConnect = () => {
-      if (connectedOnce.current) message.success("Đã khôi phục kết nối thời gian thực.");
+      // if (connectedOnce.current) message.success("Đã khôi phục kết nối thời gian thực.");
       connectedOnce.current = true;
     };
     const onDisconnect = () => {

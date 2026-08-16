@@ -1,13 +1,24 @@
 import { useMutation } from "@tanstack/react-query";
 import { onAskChatbot } from "../services/api";
 
-const useChatbot = () => {
-    return useMutation({
-        mutationKey: ["chatbot"],
-        mutationFn: async (payload: { message: string, history: any[] }) => {
-            return onAskChatbot(payload);
-        }
-    });
+type ChatbotPayload = {
+  message: string;
+  history: any[];
 };
 
-export default useChatbot
+const useChatbot = () => {
+  return useMutation({
+    mutationKey: ["chatbot"],
+
+    mutationFn: async (payload: ChatbotPayload) => {
+      const data = await onAskChatbot(payload);
+      return data;
+    },
+
+    onError: (error) => {
+      console.error("[useChatbot] Error:", error);
+    },
+  });
+};
+
+export default useChatbot;
