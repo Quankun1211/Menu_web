@@ -10,6 +10,14 @@ export const profileRouter: RouteObject[] = [
                 lazy: lazyLoad(() => import("../pages/Profile"))
             },
             {
+                path: "personal-info",
+                lazy: lazyLoad(() => import("../pages/PersonalInfo"))
+            },
+            {
+                path: "change-password",
+                lazy: lazyLoad(() => import("../pages/ChangePassword"))
+            },
+            {
                 path: "wishlist",
                 lazy: lazyLoad(() => import("../pages/WishList"))
             },

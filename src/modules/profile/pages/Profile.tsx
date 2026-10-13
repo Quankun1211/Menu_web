@@ -14,7 +14,9 @@ import {
   ChevronRight,
   ShieldCheck,
   CircleSlash,
-  Layout
+  Layout,
+  UserRound,
+  KeyRound
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import useGetMe from '../../../hooks/useGetMe';
@@ -66,6 +68,8 @@ export default function ProfileScreen() {
   };
 
   const menuItems = [
+    { id: 'personal', title: 'Thông tin cá nhân', icon: <UserRound size={22} />, iconColor: '#FFB039', onPress: () => navigate('/profile/personal-info') },
+    { id: 'password', title: 'Đổi mật khẩu', icon: <KeyRound size={22} />, iconColor: '#FFB039', onPress: () => navigate('/profile/change-password') },
     { id: 'coupons', title: 'Voucher của tôi', icon: <Ticket size={22} />, iconColor: '#FFB039', onPress: () => setShowCouponsModal(true) }, 
     { id: 'favourite', title: 'Yêu thích', icon: <Heart size={22} />, iconColor: '#FFB039', onPress: () => navigate('/profile/wishlist') },
     { id: 'recipes', title: 'Sổ tay công thức', icon: <Book size={22} />, iconColor: '#FFB039', onPress: () => navigate('/profile/recipe-handbook') },

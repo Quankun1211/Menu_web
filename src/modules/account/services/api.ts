@@ -2,6 +2,10 @@ import type { BackendResponse } from "../../../libs/shared/types/backend-respons
 import api from "../../../services/axios";
 import type { LoginResponse, RegisterResponse, SocialProvider } from "../types/api-response";
 import type { logInRequest, RegisterRequest } from "../types/api-request";
+export const onChangePasswordApi = async (payload: { currentPassword: string; newPassword: string }): Promise<BackendResponse<any>> => {
+    const { data } = await api.put("/users/me/password", payload);
+    return data;
+};
 export const onLogInApi = async(
     payload: logInRequest
 ) : Promise<BackendResponse<LoginResponse>> => {
