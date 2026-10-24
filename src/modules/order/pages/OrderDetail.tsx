@@ -53,8 +53,13 @@ export default function OrderDetailWeb() {
     if (paymentStatus === "refunded") return { title: "Đã hoàn tiền", sub: "Tiền đã được hoàn lại thành công", icon: <UndoOutlined />, color: "text-green-600", bg: "bg-green-50" };
     switch (status) {
       case "delivered": return { title: "Giao hàng thành công", sub: "Đơn hàng đã được giao", icon: <CheckCircleFilled />, color: "text-orange-600", bg: "bg-orange-50" };
+      case "completed": return { title: "Đơn hàng hoàn tất", sub: "Đơn hàng đã được hoàn tất", icon: <CheckCircleFilled />, color: "text-green-600", bg: "bg-green-50" };
       case "shipping": return { title: "Đang giao hàng", sub: "Người giao hàng đang đến", icon: <ClockCircleFilled />, color: "text-blue-600", bg: "bg-blue-50" };
       case "cancelled": return { title: "Đã hủy đơn", sub: "Đơn hàng đã được hủy thành công", icon: <CloseCircleFilled />, color: "text-red-600", bg: "bg-red-50" };
+      case "refunded": return { title: "Đã hoàn tiền", sub: "Đơn hàng đã được hoàn tiền", icon: <UndoOutlined />, color: "text-green-600", bg: "bg-green-50" };
+      case "assigned": return { title: "Đã phân công shipper", sub: "Shipper đang xác nhận đơn", icon: <ClockCircleFilled />, color: "text-orange-600", bg: "bg-orange-50" };
+      case "confirmed": return { title: "Shipper đã xác nhận", sub: "Đơn hàng đang được chuẩn bị giao", icon: <ClockCircleFilled />, color: "text-orange-600", bg: "bg-orange-50" };
+      case "pending_cancel": return { title: "Đang chờ xử lý hủy", sub: "Yêu cầu hủy đơn đang được xem xét", icon: <ClockCircleFilled />, color: "text-amber-600", bg: "bg-amber-50" };
       default: return { title: "Đang xử lý", sub: "Chúng tôi đang chuẩn bị hàng", icon: <ClockCircleFilled />, color: "text-orange-600", bg: "bg-orange-50" };
     }
   };
@@ -201,8 +206,9 @@ export default function OrderDetailWeb() {
               </div>
             </div>
 
-            <div className="mt-4 grid grid-cols-2 gap-3">
-              <Button icon={<CustomerServiceOutlined />} className="rounded-xl font-bold border-gray-200 text-gray-500 h-12">Hỗ trợ</Button>
+            <div className="mt-4 grid grid-cols-1 gap-3">
+            {/* <div className="mt-4 grid grid-cols-2 gap-3"> */}
+              {/* <Button icon={<CustomerServiceOutlined />} className="rounded-xl font-bold border-gray-200 text-gray-500 h-12">Hỗ trợ</Button> */}
               {order.paymentMethod === "vnpay" &&
                 ["pending", "checking", "failed", "cancelled"].includes(order.paymentStatus) &&
                 status !== "cancelled" && (

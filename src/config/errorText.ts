@@ -18,7 +18,6 @@ export const ERROR_TEXT: Record<string, string> = {
   PASSWORD_CONFIRM_MISMATCH: "Mật khẩu xác nhận không khớp.",
   SOCIAL_LOGIN_FAILED: "Không thể đăng nhập bằng tài khoản liên kết. Vui lòng thử lại.",
   INSUFFICIENT_STOCK: "Một số sản phẩm không còn đủ số lượng. Vui lòng cập nhật giỏ hàng.",
-  INVALID_DELIVERY_CODE: "Mã nhận hàng không đúng hoặc đã hết hiệu lực. Vui lòng kiểm tra lại.",
   ORDER_CONFLICT_RETRY: "Tồn kho vừa thay đổi. Vui lòng kiểm tra lại và thử đặt hàng lần nữa.",
   CHECKOUT_SESSION_REUSED: "Phiên đặt hàng đã cũ. Vui lòng quay lại giỏ hàng và thử lại.",
   TOO_MANY_PENDING_PAYMENTS: "Bạn đang có nhiều giao dịch chờ thanh toán. Vui lòng xử lý giao dịch cũ trước.",

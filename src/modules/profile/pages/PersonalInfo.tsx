@@ -11,7 +11,6 @@ export default function PersonalInfo() {
     { label: 'Họ và tên', value: user?.name, icon: UserRound },
     { label: 'Tên đăng nhập', value: user?.username, icon: ShieldCheck },
     { label: 'Email', value: user?.email || 'Chưa có email đã xác thực', icon: Mail },
-    { label: 'Số điện thoại', value: user?.phone || 'Chưa cập nhật', icon: Phone },
     { label: 'Ngày tham gia', value: user?.createdAt ? new Date(user.createdAt).toLocaleDateString('vi-VN') : '—', icon: CalendarDays },
   ];
   return <main className="min-h-[70vh] bg-[#F9F7F5] px-4 py-10"><PageMeta title="Thông tin cá nhân - Bếp Việt" indexable={false} />

@@ -3,7 +3,7 @@ import { ShopOutlined, CheckCircleOutlined, CarOutlined, HomeOutlined } from '@a
 import { formatDate, formatStepTime } from '../../../utils/helper';
 
 export default function DeliveryStatusHorizontal({ currentStatus, orderData }: any) {
-  const statusPriority: any = { 'pending': 0, 'confirmed': 1, 'processing': 1, 'shipping': 2, 'delivered': 3 };
+  const statusPriority: any = { 'pending': 0, 'assigned': 0, 'pending_cancel': 0, 'confirmed': 1, 'processing': 1, 'shipping': 2, 'delivered': 3, 'completed': 3 };
   const currentPriority = statusPriority[currentStatus] ?? 0;
 
   const steps = [

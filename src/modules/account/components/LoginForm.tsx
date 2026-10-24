@@ -42,8 +42,8 @@ function LoginForm({ onFinish }: { onFinish: (values: logInRequest) => void }) {
             message: "Hãy nhập đầy đủ mật khẩu của bạn!",
           },
           {
-            min: 6,
-            message: "Mật khẩu phải có ít nhất 6 ký tự!",
+            min: 8,
+            message: "Mật khẩu phải có ít nhất 8 ký tự!",
           },
         ]}
       >

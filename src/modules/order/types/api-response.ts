@@ -1,4 +1,6 @@
 import { AddressModel } from "@/modules/checkout/types/api-response";
+export type OrderStatus = "pending" | "assigned" | "confirmed" | "processing" | "shipping" | "delivered" | "completed" | "pending_cancel" | "payment_failed" | "cancelled" | "refunded";
+export type OrderPaymentStatus = "pending" | "checking" | "paid" | "failed" | "cancelled" | "refunded";
 export type OrderResponse = {
   _id: string;
   userId: string;
@@ -7,16 +9,7 @@ export type OrderResponse = {
   couponDiscount: number;
   totalPrice: number;
   itemsForRebuy: OrderProductResponse[],
-  status:
-    | "pending"
-    | "confirmed"
-    | "delivered"
-    | "cancelled"
-    | "shipping"
-    | "assigned"
-    | "completed"
-    | "pending_cancel"
-    | "payment_failed";
+  status: OrderStatus;
   createdAt: string;
   cancelReason: string; 
   cancelledAt: string;
@@ -26,7 +19,7 @@ export type OrderResponse = {
   thumbnail: string;
   updatedAt: string;
   paymentUrl?: string;
-  paymentStatus: string;
+  paymentStatus: OrderPaymentStatus;
   paymentMethod: string;
   shipperId?: string;
   shippedAt: string,
@@ -56,14 +49,14 @@ export type OrderProductResponse = {
 export type OrderDetailResponse = {
   _id: string,
   orderId: string,
-  status: string,
+  status: OrderStatus,
   address: AddressModel,
   items: OrderProductResponse[],
   subTotal: number,
   couponDiscount: number,
   totalPrice: number,
   createdAt: string,
-  paymentStatus: string;
+  paymentStatus: OrderPaymentStatus;
   paidAt: Date;
   paymentMethod: string;
   paymentExpiresAt?: string;
